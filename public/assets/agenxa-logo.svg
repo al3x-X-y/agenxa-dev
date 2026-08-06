@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Gradients to mimic the glossy/transparent lighting -->
+    <linearGradient id="darkBlue" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1E3A8A" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+    
+    <linearGradient id="lightBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA" />
+      <stop offset="100%" stop-color="#93C5FD" />
+    </linearGradient>
+    
+    <linearGradient id="midBlue" x1="0%" y1="50%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#818CF8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Solid white background to ensure the multiply blend mode works perfectly -->
+  <rect width="100%" height="100%" fill="#ffffff" />
+
+  <!-- Group with multiply blend mode for the transparent overlapping effect -->
+  <g style="mix-blend-mode: multiply;">
+    
+    <!-- Left Leg of the 'A' (Dark Blue) -->
+    <polygon points="250,90 100,360 170,360 290,150" fill="url(#darkBlue)" />
+
+    <!-- Right Leg of the 'A' / Bottom right of 'X' (Light Blue) -->
+    <polygon points="250,90 400,360 330,360 210,150" fill="url(#lightBlue)" opacity="0.9" />
+
+    <!-- Crossing geometric bar of the 'X' (Mid Blue) -->
+    <polygon points="135,280 205,280 390,150 320,150" fill="url(#midBlue)" opacity="0.85" />
+    
+    <!-- Lower returning bar to complete the 'X' illusion -->
+    <polygon points="245,240 315,240 400,360 330,360" fill="url(#midBlue)" opacity="0.85" />
+    
+  </g>
+</svg>

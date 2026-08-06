@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { ClerkProvider } from '@clerk/nextjs'
-import { dark } from '@clerk/themes'
+
 import { ThemeProvider } from "@/providers/theme-provider"
 
 const font = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
@@ -29,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={{ theme: dark }}>
+    
       <html
         lang="en"
         suppressHydrationWarning
@@ -53,6 +52,6 @@ export default function RootLayout({
           </ThemeProvider>
         </body>
       </html>
-    </ClerkProvider>
+    
   );
 }

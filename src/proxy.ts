@@ -1,8 +1,8 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-
 // authMiddleware - by default protect
 // clerMiddleware - by default public
+
 
 export default clerkMiddleware(async (auth, req) => {
   const url = req.nextUrl;

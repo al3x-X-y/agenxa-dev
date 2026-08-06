@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -11,6 +12,7 @@ import clsx from "clsx";
 import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
 // import { auth } from '@clerk/nextjs/server'
 
 // export default async function DashboardPage() {
@@ -21,6 +23,7 @@ import Link from "next/link";
 //     <div>Welcome to the protected dashboard!</div>
 //   )
 // }
+
 
 export default function Home() {
   return (
@@ -55,8 +58,8 @@ export default function Home() {
         <div className="flex justify-center gap-4 flex-wrap mt-6">
           {pricingCards.map((card) => (
             //WIP: Wire up free product from stripe
-            <Card 
-              key={card.title} 
+            <Card
+              key={card.title}
               className={clsx('w-[300px] flex flex-col justify-between',{'border-2 border-primary': card.title == 'Unlimited Saas', })}>
 
                 <CardHeader>
@@ -84,5 +87,6 @@ export default function Home() {
         </div>
       </section>
     </main>
+
   );
 }

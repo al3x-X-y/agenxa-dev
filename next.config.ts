@@ -41,6 +41,10 @@ const nextConfig: NextConfig = {
     ],
   },
   reactStrictMode: false,
+  // Prevents Next.js/Turbopack from bundling Prisma, fixing module & driver adapter errors
+  // For Next.js 15
+  serverExternalPackages: ['@prisma/client', 'prisma'],
+  
 };
 
 

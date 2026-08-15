@@ -41,8 +41,9 @@ const FileUpload = ({ apiEndpoint, onChange, value }: Props) => {
 				)}
 				<Button
 					onClick={() => onChange("")}
-					variant="ghost"
-					type="button">
+					variant="secondary"
+					type="button"
+					className="bg-muted/80 text-foreground hover:bg-muted border border-border/80 shadow-sm">
 					<X className="h-4 w-4" />
 					Remove Logo
 				</Button>
@@ -50,13 +51,13 @@ const FileUpload = ({ apiEndpoint, onChange, value }: Props) => {
 		);
 	}
 	return (
-		<div className="w-full bg-muted/30">
+		<div className="w-full bg-muted/30 pb-2">
 			<UploadDropzone
 				endpoint={apiEndpoint}
 				appearance={{
-					button: "bg-primary text-primary-foreground hover:bg-primary/90 ut-ready:bg-primary ut-uploading:bg-primary/50 text-sm font-medium transition-colors",
-					label: "text-primary hover:text-primary/90 text-sm font-medium",
-					allowedContent: "text-xs text-muted-foreground",
+					button: "bg-primary text-primary-foreground hover:bg-primary/90 ut-ready:bg-primary ut-uploading:bg-primary/50 text-xs font-medium transition-colors w-full max-w-[180px] min-h-[38px] px-4 rounded-lg justify-center shadow-sm",
+					label: "text-primary hover:text-primary/90 text-xs font-medium",
+					allowedContent: "text-[10px] text-muted-foreground",
 				}}
 				onClientUploadComplete={(res) => {
 					onChange(res?.[0]?.url ?? res?.[0]?.ufsUrl);

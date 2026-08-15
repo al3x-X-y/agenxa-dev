@@ -5,7 +5,7 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { User, Agency, Plan, SubAccount } from "@prisma/client";
+import { User, Agency, Plan } from "@prisma/client";
 
 //==============================================================================
 //==============================================================================
@@ -268,19 +268,41 @@ export const initUser = async (newUser: Partial<User>) => {
 //==============================================================================
 //==============================================================================
 
-export const upsertAgency = async (agency: Agency, price?: Plan) => {
+export const upsertAgency = async (agency: Agency, _price?: Plan) => {
 	if (!agency.companyEmail) return null;
+
+	const agencyData = {
+		id: agency.id,
+		name: agency.name ?? "",
+		agencyLogo: agency.agencyLogo ?? "",
+		companyEmail: agency.companyEmail,
+		companyPhone: agency.companyPhone ?? "",
+		whiteLabel: agency.whiteLabel ?? true,
+		address: agency.address ?? "",
+		city: agency.city ?? "",
+		zipCode: agency.zipCode ?? "",
+		state: agency.state ?? "",
+		country: agency.country ?? "",
+		connectAccountId: agency.connectAccountId ?? "",
+		goal: agency.goal ?? 5,
+		createdAt: agency.createdAt ?? new Date(),
+		updatedAt: agency.updatedAt ?? new Date(),
+	};
+
 	try {
 		const agencyDetails = await db.agency.upsert({
 			where: {
 				id: agency.id,
 			},
-			update: agency,
+			update: {
+				...agencyData,
+				updatedAt: new Date(),
+			},
 			create: {
+				...agencyData,
 				users: {
 					connect: { email: agency.companyEmail },
 				},
-				...agency,
 				SidebarOption: {
 					create: [
 						{
@@ -317,8 +339,10 @@ export const upsertAgency = async (agency: Agency, price?: Plan) => {
 				},
 			},
 		});
+
 		return agencyDetails;
 	} catch (error) {
-		console.log(error);
+		console.error("upsertAgency error:", error);
+		throw error;
 	}
 };

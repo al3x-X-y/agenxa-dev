@@ -51,11 +51,8 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 
 import * as z from "zod";
-import { Field } from "../ui/field";
 import { Input } from "../ui/input";
 import Loading from "../global/loading";
-
-//import { resolve } from "path";
 
 type Props = {
 	data?: Partial<Agency>;
@@ -76,7 +73,6 @@ const FromSchema = z.object({
 });
 
 const AgencyDetails = ({ data }: Props) => {
-	//const { toast } = useToast();
 	const router = useRouter();
 	const [deletingAgency, setDeletingAgency] = useState(false);
 
@@ -84,30 +80,42 @@ const AgencyDetails = ({ data }: Props) => {
 		mode: "onChange",
 		resolver: zodResolver(FromSchema),
 		defaultValues: {
-			name: data?.name,
-			companyEmail: data?.companyEmail,
-			companyPhone: data?.companyPhone,
-			whiteLabel: data?.whiteLabel || false,
-			address: data?.address,
-			city: data?.city,
-			zipCode: data?.zipCode,
-			state: data?.state,
-			country: data?.country,
-			agencyLogo: data?.agencyLogo,
+			name: data?.name ?? "",
+			companyEmail: data?.companyEmail ?? "",
+			companyPhone: data?.companyPhone ?? "",
+			whiteLabel: data?.whiteLabel ?? false,
+			address: data?.address ?? "",
+			city: data?.city ?? "",
+			zipCode: data?.zipCode ?? "",
+			state: data?.state ?? "",
+			country: data?.country ?? "",
+			agencyLogo: data?.agencyLogo ?? "",
 		},
 	});
 	const isLoading = form.formState.isSubmitting;
 
 	useEffect(() => {
 		if (data) {
-			form.reset(data);
+			form.reset({
+				name: data?.name ?? "",
+				companyEmail: data?.companyEmail ?? "",
+				companyPhone: data?.companyPhone ?? "",
+				whiteLabel: data?.whiteLabel ?? false,
+				address: data?.address ?? "",
+				city: data?.city ?? "",
+				zipCode: data?.zipCode ?? "",
+				state: data?.state ?? "",
+				country: data?.country ?? "",
+				agencyLogo: data?.agencyLogo ?? "",
+			});
 		}
-	}, [data]);
+	}, [data, form]);
 
 	const handleSubmit = async (values: z.infer<typeof FromSchema>) => {
+		console.log("[agency form submit] values:", values);
 		try {
-			let newUserData;
-			let customerId;
+			let newUserData, custId;
+
 			if (!data?.id) {
 				const bodyData = {
 					email: values.companyEmail,
@@ -118,7 +126,7 @@ const AgencyDetails = ({ data }: Props) => {
 							country: values.country,
 							line1: values.address,
 							postal_code: values.zipCode,
-							state: values.zipCode,
+							state: values.state,
 						},
 						name: values.name,
 					},
@@ -132,35 +140,31 @@ const AgencyDetails = ({ data }: Props) => {
 				};
 			}
 
-			//WIP custID
 			newUserData = await initUser({ role: "AGENCY_OWNER" });
-			if (!data?.id) return;
+			if (!data?.id) {
+				await upsertAgency({
+					id: data?.id ? data.id : v4(),
+					address: values.address,
+					agencyLogo: values.agencyLogo,
+					city: values.city,
+					companyPhone: values.companyPhone,
+					country: values.country,
+					name: values.name,
+					state: values.state,
+					whiteLabel: values.whiteLabel,
+					zipCode: values.zipCode,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					companyEmail: values.companyEmail,
+					connectAccountId: "",
+					goal: 5,
+				});
 
-			const response = await upsertAgency({
-				id: data?.id ? data.id : v4(),
-				address: values.address,
-				agencyLogo: values.agencyLogo,
-				city: values.city,
-				companyPhone: values.companyPhone,
-				country: values.country,
-				name: values.name,
-				state: values.state,
-				whiteLabel: values.whiteLabel,
-				zipCode: values.zipCode,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-				companyEmail: values.companyEmail,
-				connectAccountId: "",
-				goal: 5,
-			});
-
-			toast.success("Created Agency");
-			if (data?.id) return router.refresh();
-			if (response) {
+				toast.success("Created Agency");
 				return router.refresh();
 			}
-		} catch (error) {
-			console.log(error);
+		} catch (error: unknown) {
+			console.error(error);
 			toast.error("Oops!", {
 				description: "Could not create your agency",
 			});
@@ -168,21 +172,21 @@ const AgencyDetails = ({ data }: Props) => {
 	};
 	const handleDeleteAgency = async () => {
 		if (!data?.id) return;
-		setDeletingAgency(true);
 
 		// WIP: Discontinue the Subscription
 
 		try {
 			setDeletingAgency(true);
-			const response = await deleteAgency(data?.id);
 
 			toast.success("Deleted Agency", {
 				description: "Deleted your agency and all subaccounts",
 			});
 
 			router.refresh();
-		} catch (error: any) {
-			console.error(error.message);
+		} catch (error: unknown) {
+			const message =
+				error instanceof Error ? error.message : String(error);
+			console.error(message);
 			toast.error("Oops!", {
 				description: "Couldn't delete your agency",
 			});
@@ -214,13 +218,11 @@ const AgencyDetails = ({ data }: Props) => {
 									<FormItem>
 										<FormLabel>Agency Logo</FormLabel>
 										<FormControl>
-											{
-												<FileUpload
-													apiEndpoint="agencyLogo"
-													onChange={field.onChange}
-													value={field.value}
-												/>
-											}
+											<FileUpload
+												apiEndpoint="agencyLogo"
+												onChange={field.onChange}
+												value={field.value}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -307,10 +309,20 @@ const AgencyDetails = ({ data }: Props) => {
 
 											<FormControl>
 												<Switch
-													checked={field.value}
-													onCheckedChange={
-														field.onChange
-													}
+													checked={Boolean(
+														field.value,
+													)}
+													onCheckedChange={(
+														checked,
+													) => {
+														console.log(
+															"[whiteLabel switch] checked:",
+															checked,
+														);
+														field.onChange(
+															Boolean(checked),
+														);
+													}}
 												/>
 											</FormControl>
 										</FormItem>

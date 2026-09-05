@@ -6,15 +6,16 @@ export default clerkMiddleware(async (auth, req) => {
   const searchParams = url.searchParams.toString();
   const hostname = req.headers;
 
-  const pathWithSearchParams = `${url.pathname}${
-    searchParams.length > 0 ? `?${searchParams}` : ''
-  }`;
+  const pathWithSearchParams = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''
+    }`;
 
   // if subdomain exists
-  const customSubDomain = hostname
-    .get('host')
-    ?.split(`${process.env.NEXT_PUBLIC_DOMAIN}`)
-    .filter(Boolean)[0];
+  const host = hostname.get('host') || '';
+  const domain = process.env.NEXT_PUBLIC_DOMAIN || '';
+  const customSubDomain =
+    domain && host.includes(`.${domain}`)
+      ? host.split(`.${domain}`)[0]
+      : undefined;
 
   if (customSubDomain) {
     return NextResponse.rewrite(
@@ -37,7 +38,7 @@ export default clerkMiddleware(async (auth, req) => {
     url.pathname.startsWith('/agency') ||
     url.pathname.startsWith('/subaccount')
   ) {
-    return NextResponse.rewrite(new URL(`${pathWithSearchParams}`, req.url));
+    return NextResponse.next();
   }
 });
 

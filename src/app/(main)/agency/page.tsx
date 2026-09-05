@@ -9,9 +9,11 @@ import AgencyDetails from "@/components/forms/agency-details";
 export default async function Page({
 	searchParams,
 }: {
-	searchParams: { plan: Plan; state: string; code: string };
+	searchParams: Promise<{ plan?: Plan; state?: string; code?: string }>;
 }) {
 	// If the user isn't logged in, they are redirected to the sign-in page
+
+	const resolvedSearchParams = await searchParams;
 
 	const agencyId = await verifyAndAcceptInvitation();
 	console.log(agencyId);
@@ -28,17 +30,17 @@ export default async function Page({
 			user?.role === "AGENCY_OWNER" ||
 			user?.role === "AGENCY_ADMIN"
 		) {
-			if (searchParams.plan) {
+			if (resolvedSearchParams.plan) {
 				return redirect(
-					`/agency/${agencyId}/billing?plan=${searchParams.plan}`,
+					`/agency/${agencyId}/billing?plan=${resolvedSearchParams.plan}`,
 				);
 			}
-			if (searchParams.state) {
-				const statePath = searchParams.state.split("__")[0];
-				const stateAgencyId = searchParams.state.split("__")[1];
+			if (resolvedSearchParams.state) {
+				const statePath = resolvedSearchParams.state.split("__")[0];
+				const stateAgencyId = resolvedSearchParams.state.split("__")[1];
 				if (!stateAgencyId) return <div>Not Authorized</div>;
 				return redirect(
-					`/agency/${stateAgencyId}/${statePath}?code=${searchParams.code}`,
+					`/agency/${stateAgencyId}/${statePath}?code=${resolvedSearchParams.code}`,
 				);
 			} else return redirect(`/agency/${agencyId}`);
 		} else {

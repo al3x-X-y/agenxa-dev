@@ -28,6 +28,14 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "ufs.sh",
+      },
+      {
+        protocol: "https",
+        hostname: "*.ufs.sh",
+      },
+      {
+        protocol: "https",
         hostname: "img.clerk.com",
       },
       {
@@ -44,7 +52,7 @@ const nextConfig: NextConfig = {
   // Prevents Next.js/Turbopack from bundling Prisma, fixing module & driver adapter errors
   // For Next.js 15
   serverExternalPackages: ['@prisma/client', 'prisma'],
-  
+
 };
 
 

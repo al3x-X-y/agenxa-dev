@@ -95,7 +95,7 @@ const AgencyDetails = ({ data }: Props) => {
 	const isLoading = form.formState.isSubmitting;
 
 	useEffect(() => {
-		if (data) {
+		if (data?.id) {
 			form.reset({
 				name: data?.name ?? "",
 				companyEmail: data?.companyEmail ?? "",
@@ -211,7 +211,6 @@ const AgencyDetails = ({ data }: Props) => {
 							onSubmit={form.handleSubmit(handleSubmit)}
 							className="space-y-4">
 							<FormField
-								disabled={isLoading}
 								control={form.control}
 								name="agencyLogo"
 								render={({ field }) => (
@@ -230,14 +229,13 @@ const AgencyDetails = ({ data }: Props) => {
 							/>
 							<div className="flex md:flex-row gap-4">
 								<FormField
-									disabled={isLoading}
 									control={form.control}
 									name="name"
 									render={({ field }) => (
 										<FormItem className="flex-1">
 											<FormLabel>Agency Name</FormLabel>
 											<FormControl>
-												<Input
+												<Input disabled={isLoading}
 													placeholder="Your agency name"
 													{...field}
 												/>
@@ -266,7 +264,6 @@ const AgencyDetails = ({ data }: Props) => {
 							</div>
 							<div className="flex md:flex-row gap-4">
 								<FormField
-									disabled={isLoading}
 									control={form.control}
 									name="companyPhone"
 									render={({ field }) => (
@@ -275,7 +272,7 @@ const AgencyDetails = ({ data }: Props) => {
 												Agency Phone Number
 											</FormLabel>
 											<FormControl>
-												<Input
+												<Input disabled={isLoading}
 													placeholder="Phone"
 													{...field}
 												/>
@@ -287,7 +284,6 @@ const AgencyDetails = ({ data }: Props) => {
 							</div>
 
 							<FormField
-								disabled={isLoading}
 								control={form.control}
 								name="whiteLabel"
 								render={({ field }) => {
@@ -330,14 +326,13 @@ const AgencyDetails = ({ data }: Props) => {
 								}}
 							/>
 							<FormField
-								disabled={isLoading}
 								control={form.control}
 								name="address"
 								render={({ field }) => (
 									<FormItem className="flex-1">
 										<FormLabel>Address</FormLabel>
 										<FormControl>
-											<Input
+											<Input disabled={isLoading}
 												placeholder="123 st..."
 												{...field}
 											/>
@@ -348,14 +343,13 @@ const AgencyDetails = ({ data }: Props) => {
 							/>
 							<div className="flex md:flex-row gap-4">
 								<FormField
-									disabled={isLoading}
 									control={form.control}
 									name="city"
 									render={({ field }) => (
 										<FormItem className="flex-1">
 											<FormLabel>City</FormLabel>
 											<FormControl>
-												<Input
+												<Input disabled={isLoading}
 													placeholder="City"
 													{...field}
 												/>
@@ -365,14 +359,13 @@ const AgencyDetails = ({ data }: Props) => {
 									)}
 								/>
 								<FormField
-									disabled={isLoading}
 									control={form.control}
 									name="state"
 									render={({ field }) => (
 										<FormItem className="flex-1">
 											<FormLabel>State</FormLabel>
 											<FormControl>
-												<Input
+												<Input disabled={isLoading}
 													placeholder="State"
 													{...field}
 												/>
@@ -382,14 +375,13 @@ const AgencyDetails = ({ data }: Props) => {
 									)}
 								/>
 								<FormField
-									disabled={isLoading}
 									control={form.control}
 									name="zipCode"
 									render={({ field }) => (
 										<FormItem className="flex-1">
 											<FormLabel>Zipcpde</FormLabel>
 											<FormControl>
-												<Input
+												<Input disabled={isLoading}
 													placeholder="Zipcode"
 													{...field}
 												/>
@@ -400,14 +392,13 @@ const AgencyDetails = ({ data }: Props) => {
 								/>
 							</div>
 							<FormField
-								disabled={isLoading}
 								control={form.control}
 								name="country"
 								render={({ field }) => (
 									<FormItem className="flex-1">
 										<FormLabel>Country</FormLabel>
 										<FormControl>
-											<Input
+											<Input disabled={isLoading}
 												placeholder="Country"
 												{...field}
 											/>

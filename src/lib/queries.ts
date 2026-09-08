@@ -5,7 +5,8 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { User, Agency, Plan } from "@prisma/client";
+import { User, Agency, Plan, SubAccount } from "@prisma/client";
+import { v4 } from "uuid";
 
 //==============================================================================
 //==============================================================================
@@ -359,5 +360,139 @@ export const getNotificationAndUser = async (agencyId: string) => {
 		return response
 	} catch (error) {
 		console.log(error)
+	}
+}
+//==============================================================================
+//==============================================================================
+//============================= UPSERT A SUBACCOUNT ===========================
+//==============================================================================
+//==============================================================================
+
+export const upsertSubAccount = async (subAccount: SubAccount) => {
+	if (!subAccount.companyEmail) return null
+	const agencyOwner = await db.user.findFirst({
+		where: {
+			Agency: {
+				id: subAccount.agencyId,
+			},
+			role: 'AGENCY_OWNER'
+		}
+	})
+	if (!agencyOwner) return console.log('🔴Error could not create subaccount because currently not agency owner')
+	const permissionId = v4();
+	const response = await db.subAccount.upsert({
+		where: {
+			id: subAccount.id
+		},
+		update: subAccount,
+		create: {
+			...subAccount,
+			Permissions: {
+				create: {
+					access: true,
+					email: agencyOwner.email,
+					id: permissionId,
+				},
+				connect: {
+					subAccountId: subAccount.id,
+					id: permissionId
+				},
+			},
+			Pipeline: {
+				create: { name: 'Lead Cycle' },
+			},
+			SidebarOption: {
+				create: [
+					{
+						name: 'Launchpad',
+						icon: 'clipboardIcon',
+						link: `/subaccount/${subAccount.id}/launchpad`,
+					},
+					{
+						name: 'Settings',
+						icon: 'settings',
+						link: `/subaccount/${subAccount.id}/settings`,
+					},
+					{
+						name: 'Funnels',
+						icon: 'pipelines',
+						link: `/subaccount/${subAccount.id}/funnels`,
+					},
+					{
+						name: 'Media',
+						icon: 'database',
+						link: `/subaccount/${subAccount.id}/media`,
+					},
+					{
+						name: 'Automations',
+						icon: 'chip',
+						link: `/subaccount/${subAccount.id}/automations`,
+					},
+					{
+						name: 'Pipelines',
+						icon: 'flag',
+						link: `/subaccount/${subAccount.id}/pipelines`,
+					},
+					{
+						name: 'Contacts',
+						icon: 'person',
+						link: `/subaccount/${subAccount.id}/contacts`,
+					},
+					{
+						name: 'Dashboard',
+						icon: 'category',
+						link: `/subaccount/${subAccount.id}`,
+					},
+				],
+			},
+		}
+	})
+	return response
+}
+
+export const getUserPermissions = async (userId: string) => {
+	const response = await db.user.findUnique({
+		where: { id: userId },
+		select: { Permissions: { include: { SubAccount: true } } },
+	})
+
+	return response
+}
+
+export const updateUser = async (user: Partial<User>) => {
+	const response = await db.user.update({
+		where: { email: user.email },
+		data: { ...user },
+	})
+
+	await (await clerkClient()).users.updateUserMetadata(response.id, {
+		privateMetadata: {
+			role: user.role || 'SUBACCOUNT_USER',
+		},
+	})
+
+	return response
+}
+
+
+export const changeUserPermissions = async (
+	permissionsId: string | undefined,
+	userEmail: string,
+	subAccountId: string,
+	permission: boolean
+) => {
+	try {
+		const response = await db.permissions.upsert({
+			where: { id: permissionsId },
+			update: { access: permission },
+			create: {
+				access: permission,
+				email: userEmail,
+				subAccountId: subAccountId,
+			},
+		})
+		return response
+	} catch (error) {
+		console.log("🔴Could not change permission", error)
 	}
 }

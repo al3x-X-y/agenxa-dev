@@ -4,6 +4,9 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 
 import { ThemeProvider } from "@/providers/theme-provider"
+import ModalProvider from "@/providers/modal-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const font = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -28,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
+    <ClerkProvider afterSignOutUrl="/">
       <html
         lang="en"
         suppressHydrationWarning
@@ -48,10 +51,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <ModalProvider>
+              {children}
+              <Toaster />
+            </ModalProvider>
           </ThemeProvider>
         </body>
       </html>
-    
+    </ClerkProvider>
+
   );
 }

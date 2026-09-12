@@ -491,11 +491,16 @@ export const updateUser = async (user: Partial<User>) => {
 		data: { ...user },
 	})
 
-	await (await clerkClient()).users.updateUserMetadata(response.id, {
-		privateMetadata: {
-			role: user.role || 'SUBACCOUNT_USER',
-		},
-	})
+	try {
+		const client = await clerkClient()
+		await client.users.updateUserMetadata(response.id, {
+			privateMetadata: {
+				role: user.role || 'SUBACCOUNT_USER',
+			},
+		})
+	} catch (error) {
+		console.log('Could not update Clerk user metadata:', error)
+	}
 
 	return response
 }
@@ -570,10 +575,24 @@ export const sendInvitation = async (
 	email: string,
 	agencyId: string
 ) => {
-	const resposne = await db.invitation.upsert({
+	const existingInvitation = await db.invitation.findUnique({
 		where: { email },
-		update: { role, agencyId },
-		create: { email, agencyId, role },
+	})
+
+	if (existingInvitation) {
+		throw new Error('An invitation has already been sent to this user')
+	}
+
+	const existingUser = await db.user.findUnique({
+		where: { email },
+	})
+
+	if (existingUser) {
+		throw new Error('This user is already a member of a team')
+	}
+
+	const resposne = await db.invitation.create({
+		data: { email, agencyId, role },
 	})
 
 	try {

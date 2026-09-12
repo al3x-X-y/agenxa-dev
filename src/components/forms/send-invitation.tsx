@@ -69,8 +69,15 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
       })
       setClose()
       router.refresh()
-    } catch (error) {
+    } catch (error: any) {
       console.log(error)
+      const errorMsg =
+        error?.message?.replace(/^Error:\s*/, '') ||
+        'An invitation has already been sent to this user'
+      form.setError('email', {
+        type: 'manual',
+        message: errorMsg,
+      })
       toast({
         variant: 'destructive',
         title: 'Oppse!',

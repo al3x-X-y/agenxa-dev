@@ -5,7 +5,7 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { User, Agency, Plan, SubAccount } from "@prisma/client";
+import { User, Agency, Plan, SubAccount, Role } from "@prisma/client";
 import { v4 } from "uuid";
 
 //==============================================================================
@@ -138,6 +138,25 @@ export const saveActivityLogsNotification = async ({
 
 export const createTeamUser = async (agencyId: string, user: User) => {
 	if (user.role == "AGENCY_OWNER") return null;
+	const existingUser = await db.user.findFirst({
+		where: {
+			OR: [{ id: user.id }, { email: user.email }],
+		},
+	});
+
+	if (existingUser) {
+		const response = await db.user.update({
+			where: { id: existingUser.id },
+			data: {
+				name: user.name,
+				avatarUrl: user.avatarUrl,
+				role: user.role,
+				agencyId: user.agencyId,
+			},
+		});
+		return response;
+	}
+
 	const response = await db.user.create({ data: { ...user } });
 	return response;
 };
@@ -520,4 +539,56 @@ export const deleteSubAccount = async (subaccountId: string) => {
 		},
 	})
 	return response
+}
+
+
+export const deleteUser = async (userId: string) => {
+	const client = await clerkClient()
+	await client.users.updateUserMetadata(userId, {
+		privateMetadata: {
+			role: undefined,
+		},
+	})
+	const deletedUser = await db.user.delete({ where: { id: userId } })
+
+	return deletedUser
+}
+
+export const getUser = async (id: string) => {
+	const user = await db.user.findUnique({
+		where: {
+			id,
+		},
+	})
+
+	return user
+}
+
+
+export const sendInvitation = async (
+	role: Role,
+	email: string,
+	agencyId: string
+) => {
+	const resposne = await db.invitation.upsert({
+		where: { email },
+		update: { role, agencyId },
+		create: { email, agencyId, role },
+	})
+
+	try {
+		const client = await clerkClient()
+		await client.invitations.createInvitation({
+			emailAddress: email,
+			redirectUrl: process.env.NEXT_PUBLIC_URL,
+			publicMetadata: {
+				throughInvitation: true,
+				role,
+			},
+		})
+	} catch (error: any) {
+		console.log('ℹ️ Note: Clerk automated email skipped (' + (error?.errors?.[0]?.message || 'Invitations not supported on this instance') + '). Invitation saved to database.')
+	}
+
+	return resposne
 }

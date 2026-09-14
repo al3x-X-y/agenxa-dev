@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils";
 
 import { ThemeProvider } from "@/providers/theme-provider"
 import ModalProvider from "@/providers/modal-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 
 const font = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
@@ -54,6 +55,7 @@ export default function RootLayout({
             <ModalProvider>
               {children}
               <Toaster />
+              <SonnerToaster />
             </ModalProvider>
           </ThemeProvider>
         </body>

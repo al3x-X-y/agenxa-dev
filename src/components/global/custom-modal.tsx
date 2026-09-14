@@ -14,7 +14,7 @@ const CustomModal = ({ children, defaultOpen, subheading, title }: Props) => {
     const { isOpen, setClose } = useModal()
     return (
         <Dialog
-            open={isOpen || defaultOpen}
+            open={Boolean(isOpen || defaultOpen)}
             onOpenChange={setClose}
         >
             <DialogContent className="overflow-scroll md:max-h-[700px] md:h-fit h-screen bg-card">

@@ -201,7 +201,6 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
                         className="space-y-4"
                     >
                         <FormField
-                            disabled={form.formState.isSubmitting}
                             control={form.control}
                             name="avatarUrl"
                             render={({ field }) => (
@@ -220,7 +219,6 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
                         />
 
                         <FormField
-                            disabled={form.formState.isSubmitting}
                             control={form.control}
                             name="name"
                             render={({ field }) => (
@@ -238,7 +236,6 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
                             )}
                         />
                         <FormField
-                            disabled={form.formState.isSubmitting}
                             control={form.control}
                             name="email"
                             render={({ field }) => (
@@ -259,7 +256,6 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
                             )}
                         />
                         <FormField
-                            disabled={form.formState.isSubmitting}
                             control={form.control}
                             name="role"
                             render={({ field }) => (
@@ -332,7 +328,7 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
                                         return (
                                             <div
                                                 key={subAccount.id}
-                                                className="flex flex-col items-center justify-between rounded-lg border p-4"
+                                                className="flex items-center justify-between rounded-lg border p-4"
                                             >
 
                                                 <div>

@@ -1,7 +1,7 @@
 'use client'
 import { NotificationWithUser } from '@/lib/types'
 import { UserButton } from '@clerk/nextjs'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet'
 import { Bell } from 'lucide-react'
@@ -22,6 +22,9 @@ const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
     const [allNotifications, setAllNotifications] = useState(notifications)
     const [showAll, setShowAll] = useState(true)
 
+    useEffect(() => {
+        setAllNotifications(notifications)
+    }, [notifications])
 
     const handleClick = () => {
         if (!showAll) {
@@ -35,7 +38,7 @@ const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
             }
         }
 
-        setShowAll((prev) => prev)
+        setShowAll((prev) => !prev)
     }
 
     return (
@@ -53,59 +56,60 @@ const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
                                 <Bell size={17} />
                             </div>
                         </SheetTrigger>
-                        <SheetContent className="mt-4 mr-4 pr-4 flex flex-col ">
+                        <SheetContent className="mt-4 mr-4 pr-4 flex flex-col h-[calc(100vh-2rem)]">
                             <SheetHeader className="text-left">
                                 <SheetTitle>Notifications</SheetTitle>
-                                <SheetDescription>{(role === 'AGENCY_ADMIN' || role === 'AGENCY_OWNER') && (
-                                    <Card className="flex items-center justify-between p-4">
-                                        Current Subaccount
-                                        <Switch onChangeCapture={handleClick} />
-                                    </Card>
-                                )}
-                                </SheetDescription>
+                                <SheetDescription className="sr-only">Notifications list</SheetDescription>
                             </SheetHeader>
-                            {allNotifications?.map((notification) => (
-                                <div
-                                    key={notification.id}
-                                    className="flex flex-col gap-y-2 mb-2 overflow-x-scroll text-ellipsis"
-                                >
-                                    <div className="flex gap-2">
-                                        <Avatar>
-                                            <AvatarImage
-                                                src={notification.User.avatarUrl}
-                                                alt="Profile Picture"
-                                            />
-                                            <AvatarFallback className="bg-primary">
-                                                {notification.User.name.slice(0, 2).toUpperCase()}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex flex-col">
-                                            <p>
-                                                <span className="font-bold">
-                                                    {notification.notification.split('|')[0]}
-                                                </span>
-                                                <span className="text-muted-foreground">
-                                                    {notification.notification.split('|')[1]}
-                                                </span>
-                                                <span className="font-bold">
-                                                    {notification.notification.split('|')[2]}
-                                                </span>
-                                            </p>
-                                            <small className="text-xs text-muted-foreground">
-                                                {new Date(notification.createdAt).toLocaleString()}
-                                            </small>
+                            {(role === 'AGENCY_ADMIN' || role === 'AGENCY_OWNER') && (
+                                <Card className="flex items-center justify-between p-4">
+                                    Current Subaccount
+                                    <Switch onCheckedChange={handleClick} />
+                                </Card>
+                            )}
+                            <div className="flex flex-col gap-y-4 overflow-y-auto flex-1 pr-1">
+                                {allNotifications?.map((notification) => (
+                                    <div
+                                        key={notification.id}
+                                        className="flex flex-col gap-y-2 text-ellipsis shrink-0"
+                                    >
+                                        <div className="flex gap-2">
+                                            <Avatar>
+                                                <AvatarImage
+                                                    src={notification.User.avatarUrl}
+                                                    alt="Profile Picture"
+                                                />
+                                                <AvatarFallback className="bg-primary">
+                                                    {notification.User.name.slice(0, 2).toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col">
+                                                <p>
+                                                    <span className="font-bold">
+                                                        {notification.notification.split('|')[0]}
+                                                    </span>
+                                                    <span className="text-muted-foreground">
+                                                        {notification.notification.split('|')[1]}
+                                                    </span>
+                                                    <span className="font-bold">
+                                                        {notification.notification.split('|')[2]}
+                                                    </span>
+                                                </p>
+                                                <small className="text-xs text-muted-foreground">
+                                                    {new Date(notification.createdAt).toLocaleString()}
+                                                </small>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                            {allNotifications?.length === 0 && (
-                                <div
-                                    className="flex items-center justify-center text-muted-foreground mb-4"
-                                >
-                                    You have no notifications
-                                </div>
-                            )}
-
+                                ))}
+                                {allNotifications?.length === 0 && (
+                                    <div
+                                        className="flex items-center justify-center text-muted-foreground mb-4"
+                                    >
+                                        You have no notifications
+                                    </div>
+                                )}
+                            </div>
                         </SheetContent>
                     </Sheet>
                     <ModeToggle />

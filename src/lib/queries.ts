@@ -933,3 +933,37 @@ export const deleteTag = async (tagId: string) => {
 	return response;
 };
 
+
+export const getContact = async (subaccountId: string) => {
+	const response = await db.subAccount.findUnique({
+		where: {
+			id: subaccountId,
+		},
+		include: {
+			Contact: {
+				include: {
+					Ticket: {
+						select: {
+							value: true,
+						},
+					},
+				},
+				orderBy: {
+					createdAt: "asc",
+				},
+			},
+		},
+	});
+
+	return response;
+};
+
+export const upsertContact = async (contact: Prisma.ContactUncheckedCreateInput) => {
+	const response = await db.contact.upsert({
+		where: { id: contact.id || v4() },
+		update: contact,
+		create: contact,
+	});
+
+	return response;
+};

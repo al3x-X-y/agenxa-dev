@@ -854,12 +854,31 @@ export const getSubAccountTeamMembers = async (subaccountId: string) => {
 	return subaccountUsersWithAccess;
 };
 
-export const searchContacts = async (searchTerms: string) => {
+export const searchContacts = async (searchTerms: string = "", subaccountId?: string) => {
+	const term = typeof searchTerms === "string" ? searchTerms.trim() : "";
 	const response = await db.contact.findMany({
 		where: {
-			name: {
-				contains: searchTerms,
-			},
+			...(term
+				? {
+						OR: [
+							{
+								name: {
+									contains: term,
+								},
+							},
+							{
+								email: {
+									contains: term,
+								},
+							},
+						],
+				  }
+				: {}),
+			...(subaccountId
+				? {
+						subAccountId: subaccountId,
+				  }
+				: {}),
 		},
 	});
 	return response;

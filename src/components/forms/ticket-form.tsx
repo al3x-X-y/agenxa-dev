@@ -33,7 +33,8 @@ const TicketForm = ({ getNewTicket, laneId, subaccountId }: Props) => {
     const { data: defaultData, setClose } = useModal();
     const router = useRouter();
     const [tags, setTags] = useState<Tag[]>([]);
-    const [contact, setContact] = useState("");
+    const [contact, setContact] = useState(defaultData.ticket?.customerId || "");
+    const [contactPopoverOpen, setContactPopoverOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [contactList, setContactList] = useState<Contact[]>([]);
     const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -50,13 +51,13 @@ const TicketForm = ({ getNewTicket, laneId, subaccountId }: Props) => {
     });
     const isLoading = form.formState.isLoading;
 
-
-
     useEffect(() => {
         if (subaccountId) {
             const fetchData = async () => {
                 const response = await getSubAccountTeamMembers(subaccountId);
                 if (response) setAllTeamMembers(response);
+                const contacts = await searchContacts("", subaccountId);
+                if (contacts) setContactList(contacts);
             };
             fetchData();
         }
@@ -69,16 +70,10 @@ const TicketForm = ({ getNewTicket, laneId, subaccountId }: Props) => {
                 description: defaultData.ticket?.description || "",
                 value: String(defaultData.ticket?.value || 0),
             });
-            if (defaultData.ticket.customerId) setContact(defaultData.ticket.customerId);
-
-            const fetchData = async () => {
-                const response = await searchContacts(
-                    //@ts-ignore
-                    defaultData.ticket?.Customer?.name
-                );
-                setContactList(response);
-            };
-            fetchData();
+            setContact(defaultData.ticket.customerId || "");
+            if (defaultData.ticket.Assigned?.id) {
+                setAssignedTo(defaultData.ticket.Assigned.id);
+            }
         }
     }, [defaultData]);
 
@@ -90,8 +85,8 @@ const TicketForm = ({ getNewTicket, laneId, subaccountId }: Props) => {
                     ...values,
                     laneId,
                     id: defaultData.ticket?.id,
-                    assignedUserId: assignedTo,
-                    ...(contact ? { customerId: contact } : {}),
+                    assignedUserId: assignedTo || null,
+                    customerId: contact || null,
                 },
                 tags
             );
@@ -206,45 +201,58 @@ const TicketForm = ({ getNewTicket, laneId, subaccountId }: Props) => {
                             </SelectContent>
                         </Select>
                         <FormLabel>Customer</FormLabel>
-                        <Popover>
+                        <Popover open={contactPopoverOpen} onOpenChange={setContactPopoverOpen}>
                             <PopoverTrigger asChild className="w-full">
                                 <Button variant="outline" role="combobox" className="justify-between">
-                                    {contact ? contactList.find((c) => c.id === contact)?.name : "Select Customer..."}
+                                    {contact
+                                        ? contactList.find((c) => c.id === contact)?.name || defaultData.ticket?.Customer?.name || "Customer Selected"
+                                        : "Select Customer..."}
                                     <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-[400px] p-0">
                                 <Command>
                                     <CommandInput
-                                        placeholder="Search..."
+                                        placeholder="Search customer..."
                                         className="h-9"
                                         value={search}
-                                        onChangeCapture={async (value) => {
-                                            //@ts-ignore
-                                            setSearch(value.target.value);
+                                        onValueChange={(val) => {
+                                            setSearch(val);
                                             if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
                                             saveTimerRef.current = setTimeout(async () => {
-                                                const response = await searchContacts(
-                                                    //@ts-ignore
-                                                    value.target.value
-                                                );
-                                                setContactList(response);
-                                                setSearch("");
-                                            }, 1000);
+                                                const response = await searchContacts(val, subaccountId);
+                                                if (response) setContactList(response);
+                                            }, 400);
                                         }}
                                     />
                                     <CommandList>
                                         <CommandEmpty>No Customer found.</CommandEmpty>
                                         <CommandGroup>
+                                            {contact && (
+                                                <CommandItem
+                                                    value="remove_customer_clear_none"
+                                                    onSelect={() => {
+                                                        setContact("");
+                                                        setContactPopoverOpen(false);
+                                                    }}
+                                                    className="text-destructive font-medium cursor-pointer"
+                                                >
+                                                    Remove Customer
+                                                </CommandItem>
+                                            )}
                                             {contactList.map((c) => (
                                                 <CommandItem
                                                     key={c.id}
-                                                    value={c.id}
-                                                    onSelect={(currentValue) => {
-                                                        setContact(currentValue === contact ? "" : currentValue);
+                                                    value={`${c.name} ${c.email || ""}`}
+                                                    onSelect={() => {
+                                                        setContact((prev) => (prev === c.id ? "" : c.id));
+                                                        setContactPopoverOpen(false);
                                                     }}
                                                 >
-                                                    {c.name}
+                                                    <div className="flex flex-col">
+                                                        <span>{c.name}</span>
+                                                        {c.email && <span className="text-xs text-muted-foreground">{c.email}</span>}
+                                                    </div>
                                                     <CheckIcon className={cn("ml-auto h-4 w-4", contact === c.id ? "opacity-100" : "opacity-0")} />
                                                 </CommandItem>
                                             ))}

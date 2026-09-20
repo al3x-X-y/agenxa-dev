@@ -54,6 +54,8 @@ import * as z from "zod";
 import { Input } from "../ui/input";
 import Loading from "../global/loading";
 
+
+
 type Props = {
 	data?: Partial<Agency>;
 };
@@ -144,6 +146,7 @@ const AgencyDetails = ({ data }: Props) => {
 			if (!data?.id) {
 				await upsertAgency({
 					id: data?.id ? data.id : v4(),
+					customerId: data?.customerId || custId || "",
 					address: values.address,
 					agencyLogo: values.agencyLogo,
 					city: values.city,

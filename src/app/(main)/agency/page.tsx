@@ -69,8 +69,9 @@ export default async function Page({
 				);
 			}
 			if (resolvedSearchParams.state) {
-				const statePath = resolvedSearchParams.state.split("__")[0];
-				const stateAgencyId = resolvedSearchParams.state.split("__")[1];
+				const statePath = resolvedSearchParams.state.split("___")[0];
+				const stateAgencyId =
+					resolvedSearchParams.state.split("___")[1];
 				if (!stateAgencyId) return <div>Not Authorized</div>;
 				return redirect(
 					`/agency/${stateAgencyId}/${statePath}?code=${resolvedSearchParams.code}`,

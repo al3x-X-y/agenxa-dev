@@ -54,8 +54,6 @@ import * as z from "zod";
 import { Input } from "../ui/input";
 import Loading from "../global/loading";
 
-
-
 type Props = {
 	data?: Partial<Agency>;
 };
@@ -140,31 +138,49 @@ const AgencyDetails = ({ data }: Props) => {
 						state: values.zipCode,
 					},
 				};
+				const customerResponse = await fetch(
+					"/api/stripe/create-customer",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(bodyData),
+					},
+				);
+				const customerData: { customerId: string } =
+					await customerResponse.json();
+				custId = customerData.customerId;
 			}
-
+			//wip custID
 			newUserData = await initUser({ role: "AGENCY_OWNER" });
-			if (!data?.id) {
-				await upsertAgency({
-					id: data?.id ? data.id : v4(),
-					customerId: data?.customerId || custId || "",
-					address: values.address,
-					agencyLogo: values.agencyLogo,
-					city: values.city,
-					companyPhone: values.companyPhone,
-					country: values.country,
-					name: values.name,
-					state: values.state,
-					whiteLabel: values.whiteLabel,
-					zipCode: values.zipCode,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-					companyEmail: values.companyEmail,
-					connectAccountId: "",
-					goal: 5,
-				});
+			// If neither an existing nor new customer ID exists, abort
+			if (!data?.customerId && !custId) return;
 
-				toast.success("Created Agency");
-				return router.refresh();
+			const response = await upsertAgency({
+				id: data?.id ? data.id : v4(),
+				customerId: data?.customerId || custId || "",
+				address: values.address,
+				agencyLogo: values.agencyLogo,
+				city: values.city,
+				companyPhone: values.companyPhone,
+				country: values.country,
+				name: values.name,
+				state: values.state,
+				whiteLabel: values.whiteLabel,
+				zipCode: values.zipCode,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				companyEmail: values.companyEmail,
+				connectAccountId: "",
+				goal: 5,
+			});
+
+			toast.success(data?.id ? "Updated Agency Details" : "Created Agency");
+			if (data?.id) {
+				router.refresh();
+			} else if (response) {
+				router.push(`/agency/${response.id}`);
 			}
 		} catch (error: unknown) {
 			console.error(error);
@@ -173,19 +189,22 @@ const AgencyDetails = ({ data }: Props) => {
 			});
 		}
 	};
+
 	const handleDeleteAgency = async () => {
 		if (!data?.id) return;
-
-		// WIP: Discontinue the Subscription
+		setDeletingAgency(true);
 
 		try {
-			setDeletingAgency(true);
+			// 1. Delete the agency from the database
+			await deleteAgency(data.id);
 
 			toast.success("Deleted Agency", {
 				description: "Deleted your agency and all subaccounts",
 			});
 
+			// 2. Clear router cache & redirect to /agency
 			router.refresh();
+			router.push("/agency");
 		} catch (error: unknown) {
 			const message =
 				error instanceof Error ? error.message : String(error);
@@ -238,7 +257,8 @@ const AgencyDetails = ({ data }: Props) => {
 										<FormItem className="flex-1">
 											<FormLabel>Agency Name</FormLabel>
 											<FormControl>
-												<Input disabled={isLoading}
+												<Input
+													disabled={isLoading}
 													placeholder="Your agency name"
 													{...field}
 												/>
@@ -275,7 +295,8 @@ const AgencyDetails = ({ data }: Props) => {
 												Agency Phone Number
 											</FormLabel>
 											<FormControl>
-												<Input disabled={isLoading}
+												<Input
+													disabled={isLoading}
 													placeholder="Phone"
 													{...field}
 												/>
@@ -335,7 +356,8 @@ const AgencyDetails = ({ data }: Props) => {
 									<FormItem className="flex-1">
 										<FormLabel>Address</FormLabel>
 										<FormControl>
-											<Input disabled={isLoading}
+											<Input
+												disabled={isLoading}
 												placeholder="123 st..."
 												{...field}
 											/>
@@ -352,7 +374,8 @@ const AgencyDetails = ({ data }: Props) => {
 										<FormItem className="flex-1">
 											<FormLabel>City</FormLabel>
 											<FormControl>
-												<Input disabled={isLoading}
+												<Input
+													disabled={isLoading}
 													placeholder="City"
 													{...field}
 												/>
@@ -368,7 +391,8 @@ const AgencyDetails = ({ data }: Props) => {
 										<FormItem className="flex-1">
 											<FormLabel>State</FormLabel>
 											<FormControl>
-												<Input disabled={isLoading}
+												<Input
+													disabled={isLoading}
 													placeholder="State"
 													{...field}
 												/>
@@ -384,7 +408,8 @@ const AgencyDetails = ({ data }: Props) => {
 										<FormItem className="flex-1">
 											<FormLabel>Zipcpde</FormLabel>
 											<FormControl>
-												<Input disabled={isLoading}
+												<Input
+													disabled={isLoading}
 													placeholder="Zipcode"
 													{...field}
 												/>
@@ -401,7 +426,8 @@ const AgencyDetails = ({ data }: Props) => {
 									<FormItem className="flex-1">
 										<FormLabel>Country</FormLabel>
 										<FormControl>
-											<Input disabled={isLoading}
+											<Input
+												disabled={isLoading}
 												placeholder="Country"
 												{...field}
 											/>

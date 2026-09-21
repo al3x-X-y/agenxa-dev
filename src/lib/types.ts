@@ -1,5 +1,4 @@
-/** @format */
-
+import Stripe from "stripe";
 import {
 	Contact,
 	Lane,
@@ -126,5 +125,7 @@ export type StripeCustomerType = {
 	shipping: ShippingInfo;
 	address: Address;
 };
+
+export type StripeCustomer = StripeCustomerType;
 
 export type PricesList = Stripe.ApiList<Stripe.Price>;

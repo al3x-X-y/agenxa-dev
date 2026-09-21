@@ -18,6 +18,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import Link from 'next/link'
 import { useModal } from '@/providers/modal-provider'
 import CustomModal from '../global/custom-modal'
+import UpgradeModal from '../global/upgrade-modal'
 import SubAccountDetails from '../forms/subaccount-details'
 import { Separator } from '../ui/separator'
 import { icons } from '@/lib/constants'
@@ -230,6 +231,25 @@ const MenuOptions = ({
                                                 <Button
                                                     className="w-full flex gap-2"
                                                     onClick={() => {
+                                                        const isAtSubaccountLimit =
+                                                            !user?.Agency?.Subscription?.active &&
+                                                            (user?.Agency?.SubAccount?.length ?? 0) >= 3;
+
+                                                        if (isAtSubaccountLimit) {
+                                                            setOpen(
+                                                                <CustomModal
+                                                                    title="Upgrade Plan"
+                                                                    subheading="Starter Plan Limit Reached"
+                                                                >
+                                                                    <UpgradeModal
+                                                                        agencyId={user?.agencyId || (details?.id as string)}
+                                                                        limitType="subaccounts"
+                                                                    />
+                                                                </CustomModal>
+                                                            );
+                                                            return;
+                                                        }
+
                                                         setOpen(
                                                             <CustomModal
                                                                 title="Create A Subaccount"
@@ -240,7 +260,6 @@ const MenuOptions = ({
                                                                     userId={user?.id as string}
                                                                     userName={user?.name}
                                                                 />
-
                                                             </CustomModal>
                                                         )
                                                     }}

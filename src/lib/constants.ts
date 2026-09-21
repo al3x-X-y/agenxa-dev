@@ -29,6 +29,8 @@ import Tune from "@/components/icons/tune";
 import Video from "@/components/icons/video-recorder";
 import Wallet from "@/components/icons/wallet";
 import Warning from "@/components/icons/warning";
+import { id } from "date-fns/locale";
+import { title } from "process";
 
 export const pricingCards = [
 	{
@@ -47,7 +49,7 @@ export const pricingCards = [
 		duration: "month",
 		highlight: "Key features",
 		features: ["Rebilling", "24/7 Support team"],
-		priceId: "price_1Ppo69RwpqMc2iheOHp2rbzA",
+		priceId: "price_1UICd40gdfnwdLmRGhGOfEQc",
 	},
 	{
 		title: "Basic",
@@ -56,8 +58,13 @@ export const pricingCards = [
 		duration: "month",
 		highlight: "Everything in Starter, plus",
 		features: ["Unlimited Sub accounts", "Unlimited Team members"],
-		priceId: "price_1Ppo73RwpqMc2ihef4jfoTTc",
+		priceId: "price_1UICd40gdfnwdLmRTdo2CMrM",
 	},
+];
+
+export const addOnProducts = [
+	{ title: "Priority Support", id: "prod_VIlP7hHoxPvxN4" },
+	//populate this with as many as we need
 ];
 
 export const icons = [

@@ -9,6 +9,7 @@ import { User, Agency, Plan, SubAccount, Role, Prisma, Lane, Ticket, Tag } from 
 import { v4 } from "uuid";
 import { CreateFunnelFormSchema, CreateMediaType } from "./types";
 import z from "zod";
+import { getAgencyPlanLimits } from "./plan-limits";
 
 //==============================================================================
 //==============================================================================
@@ -35,6 +36,7 @@ export const getAuthUserDetails = async () => {
 							SidebarOption: true,
 						},
 					},
+					Subscription: true,
 				},
 			},
 			Permissions: true,
@@ -295,6 +297,7 @@ export const upsertAgency = async (agency: Agency, _price?: Plan) => {
 
 	const agencyData = {
 		id: agency.id,
+		customerId: agency.customerId ?? "",
 		name: agency.name ?? "",
 		agencyLogo: agency.agencyLogo ?? "",
 		companyEmail: agency.companyEmail,
@@ -312,6 +315,7 @@ export const upsertAgency = async (agency: Agency, _price?: Plan) => {
 	};
 
 	try {
+		const user = await currentUser();
 		const agencyDetails = await db.agency.upsert({
 			where: {
 				id: agency.id,
@@ -323,7 +327,7 @@ export const upsertAgency = async (agency: Agency, _price?: Plan) => {
 			create: {
 				...agencyData,
 				users: {
-					connect: { email: agency.companyEmail },
+					connect: { email: user?.emailAddresses[0].emailAddress || agency.companyEmail },
 				},
 				SidebarOption: {
 					create: [
@@ -406,6 +410,21 @@ export const upsertSubAccount = async (subAccount: SubAccount) => {
 		console.log('🔴 Error: could not find AGENCY_OWNER for agency:', subAccount.agencyId)
 		return null
 	}
+
+	// Check plan limits if creating a new subaccount
+	const existingSubAccount = await db.subAccount.findUnique({
+		where: { id: subAccount.id },
+	});
+
+	if (!existingSubAccount) {
+		const limits = await getAgencyPlanLimits(subAccount.agencyId);
+		if (limits.isAtSubaccountLimit) {
+			throw new Error(
+				`You have reached the maximum limit of ${limits.maxSubaccounts} sub accounts on the ${limits.planTitle} plan. Please upgrade to create more sub accounts.`,
+			);
+		}
+	}
+
 	const permissionId = v4()
 	try {
 		const response = await db.subAccount.upsert({
@@ -577,6 +596,13 @@ export const sendInvitation = async (
 	email: string,
 	agencyId: string
 ) => {
+	const limits = await getAgencyPlanLimits(agencyId);
+	if (limits.isAtTeamMemberLimit) {
+		throw new Error(
+			`You have reached the maximum limit of ${limits.maxTeamMembers} team members on the ${limits.planTitle} plan. Please upgrade to invite more team members.`,
+		);
+	}
+
 	const existingInvitation = await db.invitation.findUnique({
 		where: { email },
 	})

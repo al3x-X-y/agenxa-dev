@@ -114,9 +114,9 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
 
             setClose()
             router.refresh()
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error saving subaccount:', error)
-            toast.error('Could not save sub account details.')
+            toast.error(error?.message || 'Could not save sub account details.')
         }
     }
 

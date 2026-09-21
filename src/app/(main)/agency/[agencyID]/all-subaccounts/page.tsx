@@ -44,7 +44,7 @@ const AllSubaccountsPage = async ({ params }: Props) => {
                     <CommandInput
                         placeholder='Search Account...'
                     />
-                    <CommandList>
+                    <CommandList className="max-h-none overflow-visible pb-24">
                         <CommandEmpty>No result found.</CommandEmpty>
                         <CommandGroup heading="Sub Accounts">
                             {!!user.Agency?.SubAccount.length ? user.Agency.SubAccount.map((subaccount: SubAccount) => (
@@ -57,7 +57,7 @@ const AllSubaccountsPage = async ({ params }: Props) => {
                                     >
                                         <div className='relative w-32'>
                                             <Image
-                                                src={subaccount.subAccountLogo}
+                                                src={subaccount.subAccountLogo || '/assets/agenxa-logo.svg'}
                                                 alt="subaccount logo"
                                                 fill
                                                 className='rounded-md object-contain bg-muted/50 p-4'

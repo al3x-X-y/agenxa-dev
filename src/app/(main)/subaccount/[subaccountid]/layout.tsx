@@ -2,6 +2,7 @@ import InfoBar from '@/components/global/infobar';
 import Sidebar from '@/components/sidebar';
 import Unauthorized from '@/components/unauthorized';
 import { getAuthUserDetails, getNotificationAndUser, verifyAndAcceptInvitation } from '@/lib/queries';
+import { getAgencyPlanLimits } from '@/lib/plan-limits';
 import { currentUser } from '@clerk/nextjs/server';
 import { Role } from '@prisma/client';
 import { redirect } from 'next/navigation';
@@ -47,15 +48,17 @@ const SubaccountLayout = async ({ children, params }: Props) => {
         }
     }
 
-    return (
-        <div className="h-screen overflow-hidden">
-            <Sidebar id={subaccountid} type="subaccount" />
-            <div className="md:pl-[300px]">
-                <InfoBar notifications={notifications} role={user.privateMetadata.role as Role} subAccountId={subaccountid} />
-                <div className="relative">{children}</div>
+        const limits = await getAgencyPlanLimits(agencyId);
+
+        return (
+            <div className="h-screen overflow-hidden">
+                <Sidebar id={subaccountid} type="subaccount" />
+                <div className="md:pl-[300px]">
+                    <InfoBar notifications={notifications} role={user.privateMetadata.role as Role} subAccountId={subaccountid} agencyId={agencyId} planLimits={limits} />
+                    <div className="relative">{children}</div>
+                </div>
             </div>
-        </div>
-    );
+        );
 };
 
 

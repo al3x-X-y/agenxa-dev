@@ -10,15 +10,19 @@ import { Card } from '../ui/card'
 import { Switch } from '../ui/switch'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { ModeToggle } from './mode-toggle'
+import PlanAvatarBadge from './plan-avatar-badge'
+import { AgencyPlanLimits } from '@/lib/plan-limits'
 
 type Props = {
     notifications: NotificationWithUser | []
     role?: Role
     className?: string
     subAccountId?: string
+    agencyId?: string
+    planLimits?: AgencyPlanLimits | null
 }
 
-const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
+const InfoBar = ({ notifications, subAccountId, className, role, agencyId, planLimits }: Props) => {
     const [allNotifications, setAllNotifications] = useState(notifications)
     const [showAll, setShowAll] = useState(true)
 
@@ -48,8 +52,8 @@ const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
                 className
             )}
             >
-                <div className="flex items-center gap-2 ml-auto">
-                    <UserButton />
+                <div className="flex items-center gap-4 ml-auto">
+                    <PlanAvatarBadge agencyId={agencyId} planLimits={planLimits} />
                     <Sheet>
                         <SheetTrigger>
                             <div className="rounded-full w-9 h-9 bg-primary flex items-center justify-center text-white">

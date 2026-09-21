@@ -137,7 +137,7 @@ const MenuOptions = ({
                                                                 className="flex gap-4 w-full h-full"
                                                             >
                                                                 <div className="relative w-16">
-                                                                    <Image src={user?.Agency?.agencyLogo}
+                                                                    <Image src={user?.Agency?.agencyLogo || '/assets/agenxa-logo.svg'}
                                                                         alt="Agency Logo"
                                                                         fill
                                                                         className="rounded-md object-contain"
@@ -157,7 +157,7 @@ const MenuOptions = ({
                                                                     className="flex gap-4 w-full h-full"
                                                                 >
                                                                     <div className="relative w-16">
-                                                                        <Image src={user?.Agency?.agencyLogo}
+                                                                        <Image src={user?.Agency?.agencyLogo || '/assets/agenxa-logo.svg'}
                                                                             alt="Agency Logo"
                                                                             fill
                                                                             className="rounded-md object-contain"
@@ -185,7 +185,7 @@ const MenuOptions = ({
                                                                 className="flex gap-4 w-full h-full"
                                                             >
                                                                 <div className="relative w-16">
-                                                                    <Image src={subaccount.subAccountLogo}
+                                                                    <Image src={subaccount.subAccountLogo || '/assets/agenxa-logo.svg'}
                                                                         alt="SubAccount Logo"
                                                                         fill
                                                                         className="rounded-md object-contain"
@@ -205,7 +205,7 @@ const MenuOptions = ({
                                                                     className="flex gap-4 w-full h-full"
                                                                 >
                                                                     <div className="relative w-16">
-                                                                        <Image src={subaccount.subAccountLogo}
+                                                                        <Image src={subaccount.subAccountLogo || '/assets/agenxa-logo.svg'}
                                                                             alt="SubAccount Logo"
                                                                             fill
                                                                             className="rounded-md object-contain"

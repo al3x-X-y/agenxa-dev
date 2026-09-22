@@ -8,6 +8,7 @@ import ModalProvider from "@/providers/modal-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
 const font = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -32,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider afterSignOutUrl="/">
+    <ClerkProvider appearance={{ theme: dark }} afterSignOutUrl="/">
       <html
         lang="en"
         suppressHydrationWarning

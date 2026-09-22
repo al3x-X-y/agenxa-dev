@@ -9,14 +9,20 @@ import AgencyDetails from "@/components/forms/agency-details";
 export default async function Page({
 	searchParams,
 }: {
-	searchParams: Promise<{ plan?: Plan; state?: string; code?: string }>;
+	searchParams: Promise<{
+		plan?: Plan;
+		state?: string;
+		code?: string;
+		payment_intent?: string;
+		payment_intent_client_secret?: string;
+		redirect_status?: string;
+	}>;
 }) {
 	// If the user isn't logged in, they are redirected to the sign-in page
 
 	const resolvedSearchParams = await searchParams;
 
 	const agencyId = await verifyAndAcceptInvitation();
-	console.log(agencyId);
 
 	//get users details - code will decide where to redirect agency account or subaccount
 	const user = await getAuthUserDetails();
@@ -35,9 +41,37 @@ export default async function Page({
 					`/agency/${agencyId}/billing?plan=${resolvedSearchParams.plan}`,
 				);
 			}
+			if (
+				resolvedSearchParams.payment_intent ||
+				resolvedSearchParams.redirect_status
+			) {
+				const query = new URLSearchParams();
+				if (resolvedSearchParams.payment_intent) {
+					query.set(
+						"payment_intent",
+						resolvedSearchParams.payment_intent,
+					);
+				}
+				if (resolvedSearchParams.payment_intent_client_secret) {
+					query.set(
+						"payment_intent_client_secret",
+						resolvedSearchParams.payment_intent_client_secret,
+					);
+				}
+				if (resolvedSearchParams.redirect_status) {
+					query.set(
+						"redirect_status",
+						resolvedSearchParams.redirect_status,
+					);
+				}
+				return redirect(
+					`/agency/${agencyId}/billing?${query.toString()}`,
+				);
+			}
 			if (resolvedSearchParams.state) {
-				const statePath = resolvedSearchParams.state.split("__")[0];
-				const stateAgencyId = resolvedSearchParams.state.split("__")[1];
+				const statePath = resolvedSearchParams.state.split("___")[0];
+				const stateAgencyId =
+					resolvedSearchParams.state.split("___")[1];
 				if (!stateAgencyId) return <div>Not Authorized</div>;
 				return redirect(
 					`/agency/${stateAgencyId}/${statePath}?code=${resolvedSearchParams.code}`,

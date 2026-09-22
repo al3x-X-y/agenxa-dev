@@ -2,6 +2,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { getAuthUserDetails } from '@/lib/queries'
+import { getAgencyPlanLimits } from '@/lib/plan-limits'
 import { SubAccount } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -14,22 +15,36 @@ type Props = {
 }
 
 const AllSubaccountsPage = async ({ params }: Props) => {
+    const { agencyID } = await params
     const user = await getAuthUserDetails()
     if (!user) return
+
+    const limits = await getAgencyPlanLimits(agencyID)
 
     return (
         <AlertDialog>
             <div className='flex flex-col'>
-                <CreateSubaccountButton
-                    user={user}
-                    id={(await params).agencyID}
-                    className='w-[200px] self-end m-6'
-                />
+                <div className='flex items-center justify-between m-6'>
+                    {limits.planTitle === 'Starter' && (
+                        <div className='text-xs text-muted-foreground bg-muted/50 border border-border px-3 py-1.5 rounded-full'>
+                            <span className='font-semibold text-foreground'>
+                                {limits.currentSubaccounts} / {limits.maxSubaccounts}
+                            </span>{' '}
+                            Subaccounts used (Starter Plan)
+                        </div>
+                    )}
+                    <CreateSubaccountButton
+                        user={user}
+                        id={agencyID}
+                        isAtLimit={limits.isAtSubaccountLimit}
+                        className='w-[200px] ml-auto'
+                    />
+                </div>
                 <Command className="rounded-lg bg-transparent">
                     <CommandInput
                         placeholder='Search Account...'
                     />
-                    <CommandList>
+                    <CommandList className="max-h-none overflow-visible pb-24">
                         <CommandEmpty>No result found.</CommandEmpty>
                         <CommandGroup heading="Sub Accounts">
                             {!!user.Agency?.SubAccount.length ? user.Agency.SubAccount.map((subaccount: SubAccount) => (
@@ -42,7 +57,7 @@ const AllSubaccountsPage = async ({ params }: Props) => {
                                     >
                                         <div className='relative w-32'>
                                             <Image
-                                                src={subaccount.subAccountLogo}
+                                                src={subaccount.subAccountLogo || '/assets/agenxa-logo.svg'}
                                                 alt="subaccount logo"
                                                 fill
                                                 className='rounded-md object-contain bg-muted/50 p-4'

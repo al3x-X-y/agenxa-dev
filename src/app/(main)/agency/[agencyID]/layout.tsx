@@ -3,6 +3,7 @@ import InfoBar from '@/components/global/infobar'
 import Sidebar from '@/components/sidebar'
 import Unauthorized from '@/components/unauthorized'
 import { getNotificationAndUser, verifyAndAcceptInvitation } from '@/lib/queries'
+import { getAgencyPlanLimits } from '@/lib/plan-limits'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import React from 'react'
@@ -35,6 +36,8 @@ const layout = async ({ children, params }: Props) => {
     const notifications = await getNotificationAndUser(agencyId)
     if (notifications) allNoti = notifications
 
+    const limits = await getAgencyPlanLimits(agencyId)
+
     return (
         <div className="h-screen overflow-hidden">
             <Sidebar
@@ -42,7 +45,7 @@ const layout = async ({ children, params }: Props) => {
                 type="agency"
             />
             <div className="md:pl-[300px]">
-                <InfoBar notifications={allNoti} />
+                <InfoBar notifications={allNoti} agencyId={agencyId} planLimits={limits} />
                 <div className="relative">
                     <BlurPage>{children} </BlurPage>
                 </div>

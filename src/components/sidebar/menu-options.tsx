@@ -18,6 +18,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import Link from 'next/link'
 import { useModal } from '@/providers/modal-provider'
 import CustomModal from '../global/custom-modal'
+import UpgradeModal from '../global/upgrade-modal'
 import SubAccountDetails from '../forms/subaccount-details'
 import { Separator } from '../ui/separator'
 import { icons } from '@/lib/constants'
@@ -136,7 +137,7 @@ const MenuOptions = ({
                                                                 className="flex gap-4 w-full h-full"
                                                             >
                                                                 <div className="relative w-16">
-                                                                    <Image src={user?.Agency?.agencyLogo}
+                                                                    <Image src={user?.Agency?.agencyLogo || '/assets/agenxa-logo.svg'}
                                                                         alt="Agency Logo"
                                                                         fill
                                                                         className="rounded-md object-contain"
@@ -156,7 +157,7 @@ const MenuOptions = ({
                                                                     className="flex gap-4 w-full h-full"
                                                                 >
                                                                     <div className="relative w-16">
-                                                                        <Image src={user?.Agency?.agencyLogo}
+                                                                        <Image src={user?.Agency?.agencyLogo || '/assets/agenxa-logo.svg'}
                                                                             alt="Agency Logo"
                                                                             fill
                                                                             className="rounded-md object-contain"
@@ -184,7 +185,7 @@ const MenuOptions = ({
                                                                 className="flex gap-4 w-full h-full"
                                                             >
                                                                 <div className="relative w-16">
-                                                                    <Image src={subaccount.subAccountLogo}
+                                                                    <Image src={subaccount.subAccountLogo || '/assets/agenxa-logo.svg'}
                                                                         alt="SubAccount Logo"
                                                                         fill
                                                                         className="rounded-md object-contain"
@@ -204,7 +205,7 @@ const MenuOptions = ({
                                                                     className="flex gap-4 w-full h-full"
                                                                 >
                                                                     <div className="relative w-16">
-                                                                        <Image src={subaccount.subAccountLogo}
+                                                                        <Image src={subaccount.subAccountLogo || '/assets/agenxa-logo.svg'}
                                                                             alt="SubAccount Logo"
                                                                             fill
                                                                             className="rounded-md object-contain"
@@ -230,6 +231,25 @@ const MenuOptions = ({
                                                 <Button
                                                     className="w-full flex gap-2"
                                                     onClick={() => {
+                                                        const isAtSubaccountLimit =
+                                                            !user?.Agency?.Subscription?.active &&
+                                                            (user?.Agency?.SubAccount?.length ?? 0) >= 3;
+
+                                                        if (isAtSubaccountLimit) {
+                                                            setOpen(
+                                                                <CustomModal
+                                                                    title="Upgrade Plan"
+                                                                    subheading="Starter Plan Limit Reached"
+                                                                >
+                                                                    <UpgradeModal
+                                                                        agencyId={user?.agencyId || (details?.id as string)}
+                                                                        limitType="subaccounts"
+                                                                    />
+                                                                </CustomModal>
+                                                            );
+                                                            return;
+                                                        }
+
                                                         setOpen(
                                                             <CustomModal
                                                                 title="Create A Subaccount"
@@ -240,7 +260,6 @@ const MenuOptions = ({
                                                                     userId={user?.id as string}
                                                                     userName={user?.name}
                                                                 />
-
                                                             </CustomModal>
                                                         )
                                                     }}

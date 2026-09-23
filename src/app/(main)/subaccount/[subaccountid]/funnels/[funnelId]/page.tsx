@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import FunnelSettings from "./_components/funnel-settings";
+import FunnelSteps from "./_components/funnel-steps";
 
 type Props = {
     params: Promise<{
@@ -16,11 +17,11 @@ type Props = {
 const Page = async ({ params }: Props) => {
     const { funnelId, subaccountid } = await params;
     const funnelPages = await getFunnel(funnelId);
-    if (!funnelPages) return redirect(`/subaccount/${(await params).subaccountid}/funnels`);
+    if (!funnelPages) return redirect(`/subaccount/${subaccountid}/funnels`);
 
     return (
         <BlurPage>
-            <Link href={`/subaccount/${(await params).subaccountid}/funnels`} className="flex justify-between gap-4 mb-4 text-muted-foreground">
+            <Link href={`/subaccount/${subaccountid}/funnels`} className="flex justify-between gap-4 mb-4 text-muted-foreground">
                 Back
             </Link>
             <h1 className="text-3xl mb-8 flex-1">{funnelPages.name}</h1>
@@ -30,10 +31,10 @@ const Page = async ({ params }: Props) => {
                     <TabsTrigger value="settings">Settings</TabsTrigger>
                 </TabsList>
                 <TabsContent value="steps">
-                    {/* <FunnelSteps funnel={funnelPages} subaccountId={params.subaccountId} pages={funnelPages.FunnelPages} funnelId={params.funnelId} /> */}
+                    <FunnelSteps funnel={funnelPages} subaccountId={subaccountid} pages={funnelPages.FunnelPages} funnelId={funnelId} />
                 </TabsContent>
                 <TabsContent value="settings">
-                    <FunnelSettings subaccountId={(await params).subaccountid} defaultData={funnelPages} />
+                    <FunnelSettings subaccountId={subaccountid} defaultData={funnelPages} />
                 </TabsContent>
             </Tabs>
         </BlurPage>

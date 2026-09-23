@@ -7,9 +7,9 @@ import { getFunnels } from "@/lib/queries";
 import FunnelForm from "@/components/forms/funnel-form";
 
 type Props = {
-    params: {
+    params: Promise<{
         subaccountid: string;
-    };
+    }>;
 };
 
 const Page = async ({ params }: Props) => {

@@ -1028,6 +1028,21 @@ export const getFunnels = async (subaccountId: string) => {
 	return response;
 };
 
+export const getFunnel = async (funnelId: string) => {
+	const funnel = await db.funnel.findUnique({
+		where: { id: funnelId },
+		include: {
+			FunnelPages: {
+				orderBy: {
+					order: "asc",
+				},
+			},
+		},
+	});
+
+	return funnel;
+};
+
 export const upsertFunnelPage = async (subaccountId: string, funnelPage: UpsertFunnelPage, funnelId: string) => {
 	if (!subaccountId || !funnelId) return;
 

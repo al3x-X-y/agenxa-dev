@@ -12,6 +12,7 @@ import {
 import type {
 	_getTicketsWithAllRelations,
 	getAuthUserDetails,
+	getFunnels,
 	getMedia,
 	getPipelineDetails,
 	getTicketsWithTags,
@@ -21,17 +22,17 @@ import z from "zod";
 
 export type NotificationWithUser =
 	| ({
-			User: {
-				id: string;
-				name: string;
-				avatarUrl: string;
-				email: string;
-				createdAt: Date;
-				updatedAt: Date;
-				role: Role;
-				agencyId: string | null;
-			};
-	  } & Notification)[]
+		User: {
+			id: string;
+			name: string;
+			avatarUrl: string;
+			email: string;
+			createdAt: Date;
+			updatedAt: Date;
+			role: Role;
+			agencyId: string | null;
+		};
+	} & Notification)[]
 	| undefined;
 
 export type UserWithPermissionsAndSubAccounts = Prisma.PromiseReturnType<
@@ -129,3 +130,12 @@ export type StripeCustomerType = {
 export type StripeCustomer = StripeCustomerType;
 
 export type PricesList = Stripe.ApiList<Stripe.Price>;
+
+export type FunnelsForSubAccount = Prisma.PromiseReturnType<typeof getFunnels>[0];
+
+export const FunnelPageSchema = z.object({
+	name: z.string().min(1),
+	pathName: z.string().optional(),
+});
+
+export type UpsertFunnelPage = Prisma.FunnelPageCreateWithoutFunnelInput;

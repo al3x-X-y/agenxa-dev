@@ -1064,8 +1064,8 @@ export const upsertFunnelPage = async (subaccountId: string, funnelPage: UpsertF
 						name: "Body",
 						styles: {
 							backgroundColor: "white",
-							type: "_body",
 						},
+						type: "__body",
 					},
 				]),
 			funnelId,
@@ -1096,6 +1096,7 @@ export const updateFunnelProducts = async (products: string, funnelId: string) =
 };
 
 export const getFunnelPageDetails = async (funnelPageId: string) => {
+	if (!funnelPageId) return null;
 	const data = await db.funnelPage.findUnique({
 		where: {
 			id: funnelPageId,

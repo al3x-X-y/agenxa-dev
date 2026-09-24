@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 /* Import uploadthing's Tailwind v4 specific stylesheet */
 @import "uploadthing/tw/v4";
+@source "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}";
 
 /* Custom variant for dark mode */
 @custom-variant dark (&:is(.dark *));
@@ -31,7 +32,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
+
   /* Retain your Tremor colors from the old config */
   --color-tremor-brand-faint: #eff6ff;
   --color-tremor-brand-muted: #bfdbfe;
@@ -39,7 +40,7 @@
   --color-tremor-brand: #3b82f6;
   --color-tremor-brand-emphasis: #1d4ed8;
   --color-tremor-brand-inverted: #ffffff;
-  
+
   /* Retain your custom dotPattern and automation-zoom-in */
   --animate-automation-zoom-in: automation-zoom-in 0.5s;
 }
@@ -71,7 +72,7 @@
 .dark {
   /* Your custom dark mode from Ilias Ism */
   --gradient: linear-gradient(to top left, #007adf, #00ecbc);
-  
+
   --background: hsl(220, 65%, 3.52%);
   --foreground: hsl(220, 10%, 97.2%);
   --muted: hsl(220, 50%, 13.2%);
@@ -97,6 +98,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground h-screen;
   }
@@ -119,6 +121,7 @@
     opacity: 0;
     transform: scale(0.95) translateY(-30px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0px);
@@ -129,6 +132,7 @@
   &::-webkit-scrollbar {
     display: none;
   }
+
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -140,4 +144,4 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
+}

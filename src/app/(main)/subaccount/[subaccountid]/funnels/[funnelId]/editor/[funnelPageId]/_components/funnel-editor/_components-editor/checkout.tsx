@@ -17,7 +17,7 @@ type Props = {
 };
 
 const Checkout = ({ element }: Props) => {
-    const { state, dispatch, subaccountId, funnelId } = useEditor();
+    const { state, dispatch, subaccountId, funnelId, pageDetails } = useEditor();
     const { styles, id } = element;
     const router = useRouter();
     const [clientSecret, setClientSecret] = useState("");
@@ -93,6 +93,20 @@ const Checkout = ({ element }: Props) => {
     const handleOnClickBody = (e: React.MouseEvent) => {
         e.stopPropagation();
         dispatch({ type: "CHANGE_CLICKED_ELEMENT", payload: { elementDetails: element } });
+    };
+
+
+    const goToNextPage = async () => {
+        // TODO: Implement logic to navigate to the next page
+        if (!state.editor.liveMode) return;
+        const funnelPages = await getFunnel(funnelId);
+        if (!funnelPages || !pageDetails) return;
+        if (funnelPages.FunnelPages.length > pageDetails.order + 1) {
+            const nextPage = funnelPages.FunnelPages.find((page) => page.order == pageDetails.order + 1);
+
+            if (!nextPage) return;
+            router.replace(`${process.env.NEXT_PUBLIC_SCHEME}${funnelPages.subDomainName}.${process.env.NEXT_PUBLIC_DOMAIN}/${nextPage.pathName}`);
+        }
     };
 
     const handleDeleteElement = () => {

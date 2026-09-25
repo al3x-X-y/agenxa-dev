@@ -7,6 +7,7 @@ import { stripe } from '@/lib/stripe'
 import { SubAccount } from '@prisma/client'
 import React from 'react'
 import { Contact2, DollarSign } from 'lucide-react'
+import PipelineValue from '@/components/global/pipeline-value'
 
 type Props = {
     params: Promise<{ subaccountid: string }>
@@ -130,7 +131,7 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                 )}
 
                 <div className="flex flex-col gap-4 pb-6">
-                    <div className="flex gap-4 flex-col xl :! flex-row">
+                    <div className="flex gap-4 flex-col xl:!flex-row">
                         <Card className="flex-1 relative">
                             <CardHeader>
                                 <CardDescription>Income</CardDescription>
@@ -164,6 +165,7 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                             </CardContent>
                             <Contact2 className="absolute right-4 top-4 text-muted-foreground" />
                         </Card>
+                        <PipelineValue subaccountId={subaccountid} />
                     </div>
                 </div>
             </div>

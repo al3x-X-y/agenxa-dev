@@ -54,7 +54,7 @@ const PipelineValue = ({ subaccountId }: Props) => {
     )
 
     return (
-        <Card className="relative w-full xl:w-[350px]">
+        <Card className="relative w-full min-w-0">
             <CardHeader>
                 <CardDescription>Pipeline value</CardDescription>
                 <small className="text-xs text-muted-foreground">

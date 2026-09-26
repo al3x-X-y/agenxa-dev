@@ -6,8 +6,13 @@ import Link from 'next/link'
 import { stripe } from '@/lib/stripe'
 import { SubAccount } from '@prisma/client'
 import React from 'react'
-import { Contact2, DollarSign } from 'lucide-react'
+import { Contact2, DollarSign, ShoppingCart } from 'lucide-react'
 import PipelineValue from '@/components/global/pipeline-value'
+import CircleProgress from '@/components/global/circle-progress'
+import SubaccountFunnelChart from '@/components/global/subaccount-funnel-chart'
+import { AreaChart, BadgeDelta } from '@tremor/react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 
 type Props = {
     params: Promise<{ subaccountid: string }>
@@ -81,10 +86,12 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
             .reduce((total, session) => total + (session.amount_total || 0), 0)
             .toFixed(2)
 
-        closingRate = +(
-            (totalClosedSessions.length / checkoutSessions.data.length) *
-            100
-        ).toFixed(2)
+        closingRate = checkoutSessions.data.length
+            ? +(
+                (totalClosedSessions.length / checkoutSessions.data.length) *
+                100
+            ).toFixed(2)
+            : 0
     }
 
     const funnels = await db.funnel.findMany({
@@ -107,7 +114,7 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
 
     return (
         <BlurPage>
-            <div className="relative h-full">
+            <div className="relative h-full overflow-x-hidden">
                 {!subaccountDetails.connectAccountId && (
                     <div className="absolute -top-10 -left-10 right-0 bottom-0 z-30 flex items-center justify-center backdrop-blur-md bg-background/50">
                         <Card className="w-[350px]">
@@ -131,8 +138,8 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                 )}
 
                 <div className="flex flex-col gap-4 pb-6">
-                    <div className="flex gap-4 flex-col xl:!flex-row">
-                        <Card className="flex-1 relative">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 pb-2">
+                        <Card className="flex-1 min-w-0 relative">
                             <CardHeader>
                                 <CardDescription>Income</CardDescription>
                                 <CardTitle className="text-4xl">
@@ -148,7 +155,7 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                             <DollarSign className="absolute right-4 top-4 text-muted-foreground" />
                         </Card>
 
-                        <Card className="flex-1 relative">
+                        <Card className="flex-1 min-w-0 relative">
                             <CardHeader>
                                 <CardDescription>Potential Income</CardDescription>
                                 <CardTitle className="text-4xl">
@@ -166,6 +173,121 @@ const SubaccountPageId = async ({ params, searchParams }: Props) => {
                             <Contact2 className="absolute right-4 top-4 text-muted-foreground" />
                         </Card>
                         <PipelineValue subaccountId={subaccountid} />
+                        <Card className="min-w-0">
+                            <CardHeader>
+                                <CardDescription>Conversions</CardDescription>
+                                <CircleProgress
+                                    value={closingRate}
+                                    description={
+                                        <>
+                                            {sessions && (
+                                                <div className="flex flex-col">
+                                                    Total Carts Opened
+                                                    <div className="flex gap-2">
+                                                        <ShoppingCart className="text-rose-700" />
+                                                        {sessions.length}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {totalClosedSessions && (
+                                                <div className="flex flex-col">
+                                                    Won Carts
+                                                    <div className="flex gap-2">
+                                                        <ShoppingCart className="text-emerald-700" />
+                                                        {totalClosedSessions.length}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                        </>
+                                    }
+                                />
+                            </CardHeader>
+                        </Card>
+                    </div>
+                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 pb-2">
+                        <Card className="relative flex-1 min-w-0">
+                            <CardHeader>
+                                <CardDescription>Funnel Performance</CardDescription>
+                            </CardHeader>
+                            <CardContent className=" text-sm text-muted-foreground flex flex-col gap-12 Justify-between ">
+                                <SubaccountFunnelChart data={funnelPerformanceMetrics} />
+                                <div className="lg:w-[150px]">
+                                    Total page visits across all funnels. Hover over to get more
+                                    details on funnel page performance.
+                                </div>
+                            </CardContent>
+                            <Contact2 className="absolute right-4 top-4 text-muted-foreground" />
+                        </Card>
+                        <Card className="p-4 flex-1 min-w-0">
+                            <CardHeader>
+                                <CardTitle>Checkout Activity</CardTitle>
+                            </CardHeader>
+                            <AreaChart
+                                className="text-sm stroke-primary"
+                                data={sessions || []}
+                                index="created"
+                                categories={['amount_total']}
+                                colors={['primary']}
+                                yAxisWidth={30}
+                                showAnimation={true}
+                            />
+
+                        </Card>
+                        <div className="min-w-0">
+                            <Card className="p-4 min-w-0 h-[450px] overflow-auto relative">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2">
+                                        Transition History
+                                        <BadgeDelta
+                                            className="rounded-xl bg-transparent"
+                                            deltaType="moderateIncrease"
+                                            isIncreasePositive={true}
+                                            size="xs"
+                                        >
+                                            +12.3%
+                                        </BadgeDelta>
+                                    </CardTitle>
+                                    <Table>
+                                        <TableHeader className="!sticky !top-0">
+                                            <TableRow>
+                                                <TableHead className="w-[300px]">Email</TableHead>
+                                                <TableHead className="w-[200px]">Status</TableHead>
+                                                <TableHead>Created Date</TableHead>
+                                                <TableHead className="text-right">Value</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody className="font-medium truncate">
+                                            {totalClosedSessions
+                                                ? totalClosedSessions.map((session) => (
+                                                    <TableRow key={session.id}>
+                                                        <TableCell>
+                                                            {session.customer_details?.email || '-'}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Badge className="bg-emerald-500 dark:text-black">
+                                                                Paid
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {new Date(session.created).toUTCString()}
+                                                        </TableCell>
+
+                                                        <TableCell className="text-right">
+                                                            <small>{currency}</small>{' '}
+                                                            <span className="text-emerald-500">
+                                                                {session.amount_total}
+                                                            </span>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))
+                                                : 'No Data'}
+                                        </TableBody>
+                                    </Table>
+                                </CardHeader>
+                            </Card>
+                        </div>
                     </div>
                 </div>
             </div>

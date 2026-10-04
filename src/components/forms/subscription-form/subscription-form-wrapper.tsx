@@ -127,38 +127,38 @@ const SubscriptionFormWrapper = ({
 							(b.unit_amount ?? 0) - (a.unit_amount ?? 0),
 					)
 					.map((price) => (
-					<Card
-						onClick={() => setSelectedPriceId(price.id as Plan)}
-						key={price.id}
-						className={clsx(
-							"relative cursor-pointer transition-all",
-							{
-								"border-primary": selectedPriceId === price.id,
-							},
-						)}>
-						<CardHeader>
-							<CardTitle>
-								$
-								{price.unit_amount
-									? price.unit_amount / 100
-									: "0"}
-								<p className="text-sm text-muted-foreground">
-									{price.nickname}
-								</p>
-								<p className="text-sm text-muted-foreground">
-									{
-										pricingCards.find(
-											(p) => p.priceId === price.id,
-										)?.description
-									}
-								</p>
-							</CardTitle>
-						</CardHeader>
-						{selectedPriceId === price.id && (
-							<div className="w-2 h-2 bg-emerald-500 rounded-full absolute top-4 right-4" />
-						)}
-					</Card>
-				))}
+						<Card
+							onClick={() => setSelectedPriceId(price.id as Plan)}
+							key={price.id}
+							className={clsx(
+								"relative cursor-pointer transition-all",
+								{
+									"border-primary": selectedPriceId === price.id,
+								},
+							)}>
+							<CardHeader>
+								<CardTitle>
+									$
+									{price.unit_amount
+										? price.unit_amount / 100
+										: "0"}
+									<p className="text-sm text-muted-foreground">
+										{price.nickname}
+									</p>
+									<p className="text-sm text-muted-foreground">
+										{
+											pricingCards.find(
+												(p) => p.priceId === price.id,
+											)?.description
+										}
+									</p>
+								</CardTitle>
+							</CardHeader>
+							{selectedPriceId === price.id && (
+								<div className="w-2 h-2 bg-emerald-500 rounded-full absolute top-4 right-4" />
+							)}
+						</Card>
+					))}
 				{options.clientSecret && !planExists && (
 					<>
 						<h1 className="text-xl">Payment Method</h1>

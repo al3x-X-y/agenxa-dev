@@ -16,7 +16,7 @@ import { useModal } from "@/providers/modal-provider";
 import { useParams, useSearchParams } from "next/navigation";
 import type { PricesList } from "@/lib/types";
 import CustomModal from "@/components/global/custom-modal";
-import SubscriptionFormWrapper from "@/components/forms/subscription-form/subcription-form-wrapper";
+import SubscriptionFormWrapper from "@/components/forms/subscription-form/subscription-form-wrapper";
 
 type Props = {
 	features: string[];

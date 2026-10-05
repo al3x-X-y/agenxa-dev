@@ -32,11 +32,22 @@ const Sidebar = async ({ id, type }: Props) => {
         }
     }
 
+    // Hide Automations from sidebar for all without deleting any code
     const sidebarOpt =
         type === 'agency'
-            ? user.Agency.SidebarOption || []
-            : user.Agency.SubAccount.find((subaccount) => subaccount.id === id)
-                ?.SidebarOption || []
+            ? (user.Agency.SidebarOption || []).filter(
+                (opt) =>
+                    opt.name.toLowerCase() !== 'automations' &&
+                    !opt.link.includes('/automations')
+            )
+            : (
+                user.Agency.SubAccount.find((subaccount) => subaccount.id === id)
+                    ?.SidebarOption || []
+            ).filter(
+                (opt) =>
+                    opt.name.toLowerCase() !== 'automations' &&
+                    !opt.link.includes('/automations')
+            )
 
     const subaccounts = user.Agency.SubAccount.filter((subaccount) =>
         user.Permissions.find(

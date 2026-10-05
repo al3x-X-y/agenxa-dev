@@ -7,7 +7,10 @@ import { v4 } from 'uuid'
 import clsx from 'clsx'
 import { Badge } from '@/components/ui/badge'
 import { EditorBtns, defaultStyles } from '@/lib/constants'
-import { normalizeStyles } from '../editor-utils'
+import { formatVideoSrc, normalizeStyles } from '../editor-utils'
+import { useModal } from '@/providers/modal-provider'
+import CustomModal from '@/components/global/custom-modal'
+import VideoUrlForm from './video-url-form'
 
 type Props = {
     element: EditorElement
@@ -16,6 +19,7 @@ type Props = {
 const TwoColumns = (props: Props) => {
     const { id, content, type } = props.element
     const { dispatch, state } = useEditor()
+    const { setOpen, setClose } = useModal()
 
     const handleOnDrop = (e: React.DragEvent, type: string) => {
         e.stopPropagation()
@@ -61,21 +65,33 @@ const TwoColumns = (props: Props) => {
                 })
                 break
             case 'video':
-                dispatch({
-                    type: 'ADD_ELEMENT',
-                    payload: {
-                        containerId: id,
-                        elementDetails: {
-                            id: v4(),
-                            name: 'Video',
-                            content: {
-                                src: 'https://www.youtube.com/embed/A3l6YYkXzzg?si=zbcCeWcpq7Cwf8W1',
-                            },
-                            styles: {},
-                            type: 'video',
-                        },
-                    },
-                })
+                setOpen(
+                    <CustomModal
+                        title="Add Video"
+                        subheading="Paste a YouTube link or video URL to embed into your page."
+                    >
+                        <VideoUrlForm
+                            onSave={(url) => {
+                                dispatch({
+                                    type: 'ADD_ELEMENT',
+                                    payload: {
+                                        containerId: id,
+                                        elementDetails: {
+                                            id: v4(),
+                                            name: 'Video',
+                                            content: {
+                                                src: formatVideoSrc(url),
+                                            },
+                                            styles: {},
+                                            type: 'video',
+                                        },
+                                    },
+                                })
+                                setClose()
+                            }}
+                        />
+                    </CustomModal>
+                )
                 break
             case 'container':
                 dispatch({

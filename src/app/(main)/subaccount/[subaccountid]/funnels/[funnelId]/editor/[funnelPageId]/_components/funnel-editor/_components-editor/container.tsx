@@ -5,13 +5,17 @@ import React from "react";
 import Recursive from "./recursive";
 import { defaultStyles, EditorBtns } from "@/lib/constants";
 import { v4 } from "uuid";
-import { normalizeStyles } from "../editor-utils";
+import { formatVideoSrc, normalizeStyles } from "../editor-utils";
+import { useModal } from "@/providers/modal-provider";
+import CustomModal from "@/components/global/custom-modal";
+import VideoUrlForm from "./video-url-form";
 
 type Props = { element: EditorElement };
 
 const Container = ({ element }: Props) => {
     const { id, name, type, styles, content } = element;
     const { dispatch, state } = useEditor();
+    const { setOpen, setClose } = useModal();
 
     const handleOnDrop = (e: React.DragEvent, type: string) => {
         e.stopPropagation();
@@ -87,21 +91,33 @@ const Container = ({ element }: Props) => {
                 });
                 break;
             case "video":
-                dispatch({
-                    type: "ADD_ELEMENT",
-                    payload: {
-                        containerId: id,
-                        elementDetails: {
-                            id: v4(),
-                            name: "Video",
-                            content: {
-                                src: "https://www.youtube.com/embed/A3l6YYkXzzg?si=zbcCeWcpq7Cwf8W1",
-                            },
-                            styles: {},
-                            type: "video",
-                        },
-                    },
-                });
+                setOpen(
+                    <CustomModal
+                        title="Add Video"
+                        subheading="Paste a YouTube link or video URL to embed on your page."
+                    >
+                        <VideoUrlForm
+                            onSave={(url) => {
+                                dispatch({
+                                    type: "ADD_ELEMENT",
+                                    payload: {
+                                        containerId: id,
+                                        elementDetails: {
+                                            id: v4(),
+                                            name: "Video",
+                                            content: {
+                                                src: formatVideoSrc(url),
+                                            },
+                                            styles: {},
+                                            type: "video",
+                                        },
+                                    },
+                                });
+                                setClose();
+                            }}
+                        />
+                    </CustomModal>
+                );
                 break;
             case "link":
                 dispatch({

@@ -281,7 +281,13 @@ const MenuOptions = ({
                             <CommandList className="py-4 overflow-visible">
                                 <CommandEmpty>No Results Found</CommandEmpty>
                                 <CommandGroup className="overflow-visible">
-                                    {sidebarOpt.map((sidebarOptions) => {
+                                    {sidebarOpt
+                                        .filter(
+                                            (opt) =>
+                                                opt.name.toLowerCase() !== 'automations' &&
+                                                !opt.link.includes('/automations')
+                                        )
+                                        .map((sidebarOptions) => {
                                         let val
                                         const result = icons.find(
                                             (icon) => icon.value === sidebarOptions.icon

@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 620" width="100%" height="100%" style="background:#090D16; border-radius:16px; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+  <defs>
+    <linearGradient id="archHeaderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#C084FC"/>
+    </linearGradient>
+    <linearGradient id="cardGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="agencyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+    <linearGradient id="subaccountGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="serviceGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EA580C"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="620" rx="16" fill="#090D16"/>
+  <circle cx="200" cy="100" r="180" fill="#0284C7" opacity="0.08" filter="blur(70px)"/>
+  <circle cx="900" cy="500" r="220" fill="#7C3AED" opacity="0.08" filter="blur(80px)"/>
+
+  <!-- Title & Subtitle -->
+  <text x="550" y="45" text-anchor="middle" font-size="22" font-weight="800" fill="url(#archHeaderGrad)" letter-spacing="1">AGENXA SYSTEM &amp; MULTI-TENANCY ARCHITECTURE</text>
+  <text x="550" y="72" text-anchor="middle" font-size="13" font-weight="400" fill="#94A3B8">Subdomain Resolution, Edge Middleware, Isolated Subaccount Workspaces, and Unified Services</text>
+
+  <!-- LAYER 1: Client / Ingress -->
+  <g transform="translate(60, 100)" filter="url(#shadow)">
+    <rect width="980" height="90" rx="12" fill="url(#cardGrad1)" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="8" height="90" rx="4" fill="url(#edgeGrad)"/>
+    <text x="24" y="32" font-size="15" font-weight="700" fill="#38BDF8">INGRESS &amp; EDGE ROUTING LAYER</text>
+    <text x="24" y="55" font-size="12" font-weight="400" fill="#94A3B8">Next.js Edge Middleware (proxy.ts) • Subdomain Extraction • Custom Domain Rewriting • Clerk Authentication Filter</text>
+    
+    <g transform="translate(680, 20)">
+      <rect width="130" height="48" rx="8" fill="#1E293B" stroke="#38BDF8" stroke-width="1"/>
+      <text x="65" y="24" text-anchor="middle" font-size="11" font-weight="600" fill="#E2E8F0">Custom Domains</text>
+      <text x="65" y="40" text-anchor="middle" font-size="10" font-weight="400" fill="#38BDF8">sub.agency.com</text>
+    </g>
+    <g transform="translate(825, 20)">
+      <rect width="130" height="48" rx="8" fill="#1E293B" stroke="#818CF8" stroke-width="1"/>
+      <text x="65" y="24" text-anchor="middle" font-size="11" font-weight="600" fill="#E2E8F0">Clerk Auth Wall</text>
+      <text x="65" y="40" text-anchor="middle" font-size="10" font-weight="400" fill="#818CF8">RBAC Edge Check</text>
+    </g>
+  </g>
+
+  <!-- Flow Arrow Down -->
+  <g transform="translate(540, 200)">
+    <line x1="10" y1="0" x2="10" y2="20" stroke="#38BDF8" stroke-width="2" stroke-dasharray="4 3"/>
+    <polygon points="5,20 15,20 10,27" fill="#38BDF8"/>
+  </g>
+
+  <!-- LAYER 2: Multi-Tenant Core (Two Columns) -->
+  <!-- Column 1: Agency Management Core -->
+  <g transform="translate(60, 235)" filter="url(#shadow)">
+    <rect width="475" height="225" rx="12" fill="url(#cardGrad1)" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="8" height="225" rx="4" fill="url(#agencyGrad)"/>
+    <text x="24" y="32" font-size="15" font-weight="700" fill="#A78BFA">AGENCY OWNER LEVEL (Master Tenant)</text>
+    
+    <g transform="translate(24, 50)">
+      <rect width="205" height="68" rx="8" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="26" font-size="13" font-weight="600" fill="#F1F5F9">Agency Operations</text>
+      <text x="16" y="45" font-size="11" font-weight="400" fill="#94A3B8">• Executive Dashboard</text>
+      <text x="16" y="59" font-size="11" font-weight="400" fill="#94A3B8">• White-Label Settings</text>
+    </g>
+
+    <g transform="translate(242, 50)">
+      <rect width="205" height="68" rx="8" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="26" font-size="13" font-weight="600" fill="#F1F5F9">Team &amp; Access Control</text>
+      <text x="16" y="45" font-size="11" font-weight="400" fill="#94A3B8">• Role-Based Permissions</text>
+      <text x="16" y="59" font-size="11" font-weight="400" fill="#94A3B8">• Email Invitations Flow</text>
+    </g>
+
+    <g transform="translate(24, 130)">
+      <rect width="205" height="75" rx="8" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="26" font-size="13" font-weight="600" fill="#F1F5F9">Stripe Connect Hub</text>
+      <text x="16" y="45" font-size="11" font-weight="400" fill="#94A3B8">• Platform Subscriptions</text>
+      <text x="16" y="59" font-size="11" font-weight="400" fill="#94A3B8">• Fee &amp; Cut Distribution</text>
+    </g>
+
+    <g transform="translate(242, 130)">
+      <rect width="205" height="75" rx="8" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="26" font-size="13" font-weight="600" fill="#F1F5F9">Subaccount Provisioning</text>
+      <text x="16" y="45" font-size="11" font-weight="400" fill="#94A3B8">• Unlimited Subaccounts</text>
+      <text x="16" y="59" font-size="11" font-weight="400" fill="#94A3B8">• Isolated DB Boundary</text>
+    </g>
+  </g>
+
+  <!-- Column 2: Subaccount Isolated Workspace -->
+  <g transform="translate(565, 235)" filter="url(#shadow)">
+    <rect width="475" height="225" rx="12" fill="url(#cardGrad1)" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="8" height="225" rx="4" fill="url(#subaccountGrad)"/>
+    <text x="24" y="32" font-size="15" font-weight="700" fill="#2DD4BF">SUBACCOUNT WORKSPACE (Client Tenant)</text>
+    
+    <g transform="translate(24, 50)">
+      <rect width="205" height="68" rx="8" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="26" font-size="13" font-weight="600" fill="#F1F5F9">Visual Funnel Builder</text>
+      <text x="16" y="45" font-size="11" font-weight="400" fill="#94A3B8">• Drag &amp; Drop Editor</text>
+      <text x="16" y="59" font-size="11" font-weight="400" fill="#94A3B8">• Live Product Checkout</text>
+    </g>
+
+    <g transform="translate(242, 50)">
+      <rect width="205" height="68" rx="8" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="26" font-size="13" font-weight="600" fill="#F1F5F9">CRM &amp; Sales Pipelines</text>
+      <text x="16" y="45" font-size="11" font-weight="400" fill="#94A3B8">• Kanban Drag Lanes</text>
+      <text x="16" y="59" font-size="11" font-weight="400" fill="#94A3B8">• Ticket &amp; Deal Tracking</text>
+    </g>
+
+    <g transform="translate(24, 130)">
+      <rect width="205" height="75" rx="8" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="26" font-size="13" font-weight="600" fill="#F1F5F9">Media Vault</text>
+      <text x="16" y="45" font-size="11" font-weight="400" fill="#94A3B8">• UploadThing Storage</text>
+      <text x="16" y="59" font-size="11" font-weight="400" fill="#94A3B8">• Asset CDN Management</text>
+    </g>
+
+    <g transform="translate(242, 130)">
+      <rect width="205" height="75" rx="8" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="26" font-size="13" font-weight="600" fill="#F1F5F9">Contact &amp; Automation</text>
+      <text x="16" y="45" font-size="11" font-weight="400" fill="#94A3B8">• Customer Contact Book</text>
+      <text x="16" y="59" font-size="11" font-weight="400" fill="#94A3B8">• Form Trigger Actions</text>
+    </g>
+  </g>
+
+  <!-- LAYER 3: Data & Infrastructure Layer -->
+  <g transform="translate(60, 480)" filter="url(#shadow)">
+    <rect width="980" height="105" rx="12" fill="url(#cardGrad1)" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="8" height="105" rx="4" fill="url(#serviceGrad)"/>
+    <text x="24" y="30" font-size="15" font-weight="700" fill="#FB923C">DATA PERSISTENCE &amp; CLOUD INFRASTRUCTURE</text>
+    
+    <g transform="translate(24, 45)">
+      <rect width="220" height="46" rx="6" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="20" font-size="12" font-weight="600" fill="#F1F5F9">Prisma ORM 7.9</text>
+      <text x="16" y="36" font-size="10" font-weight="400" fill="#94A3B8">MariaDB / MySQL Relational Schema</text>
+    </g>
+
+    <g transform="translate(260, 45)">
+      <rect width="220" height="46" rx="6" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="20" font-size="12" font-weight="600" fill="#F1F5F9">Stripe Connect Webhooks</text>
+      <text x="16" y="36" font-size="10" font-weight="400" fill="#94A3B8">Real-time Charges &amp; Subscriptions</text>
+    </g>
+
+    <g transform="translate(496, 45)">
+      <rect width="220" height="46" rx="6" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="20" font-size="12" font-weight="600" fill="#F1F5F9">UploadThing CDN</text>
+      <text x="16" y="36" font-size="10" font-weight="400" fill="#94A3B8">Multi-tenant Cloud Media Assets</text>
+    </g>
+
+    <g transform="translate(732, 45)">
+      <rect width="224" height="46" rx="6" fill="#0B1120" stroke="#334155" stroke-width="1"/>
+      <text x="16" y="20" font-size="12" font-weight="600" fill="#F1F5F9">Next.js 16 + React 19</text>
+      <text x="16" y="36" font-size="10" font-weight="400" fill="#94A3B8">App Router, SSR, Bun Runtime</text>
+    </g>
+  </g>
+</svg>
